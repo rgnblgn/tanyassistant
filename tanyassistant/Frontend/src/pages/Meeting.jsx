@@ -1,6 +1,8 @@
 // src/pages/Meeting.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Meeting.css';
+
+const API_URL = 'http://localhost:4000/api/meetings';
 
 const Meeting = () => {
   const [notes, setNotes] = useState([]);
@@ -9,19 +11,33 @@ const Meeting = () => {
   const [content, setContent] = useState('');
   const [selectedNote, setSelectedNote] = useState(null);
 
+  useEffect(() => {
+    fetch(API_URL)
+      .then(res => res.json())
+      .then(data => setNotes(data))
+      .catch(err => console.error('GET failed:', err));
+  }, []);
+
   const handleSave = () => {
     const newNote = {
-      id: Date.now(),
       title,
       content,
       date: new Date().toLocaleString('tr-TR')
     };
-    setNotes([newNote, ...notes]);
-    setTitle('');
-    setContent('');
-    setShowForm(false);
 
-    
+    fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newNote)
+    })
+      .then(res => res.json())
+      .then(saved => {
+        setNotes([saved, ...notes]);
+        setTitle('');
+        setContent('');
+        setShowForm(false);
+      })
+      .catch(err => console.error('POST failed:', err));
   };
 
   return (
@@ -56,7 +72,7 @@ const Meeting = () => {
       <div className="note-grid">
         {notes.map(note => (
           <div
-            key={note.id}
+            key={note._id}
             className="note-card"
             onClick={() => setSelectedNote(note)}
           >
