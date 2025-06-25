@@ -6,7 +6,6 @@ const statusColors = {
   'Test': '#e0e0e0',
   'Beklemede': '#bbdefb',
   'Development': '#ffecb3',
-
 };
 
 const API_DAILY = 'http://localhost:4000/api/daily';
@@ -17,21 +16,7 @@ const Dashboard = ({ externalData = [] }) => {
   const [comment, setCommnet] = useState('');
   const [pComment, postComment] = useState([]);
   const [activeComment, setActiveComment] = useState([[], [], []]);
-  const [aktifKodlananlar, setAktifKodlananlar] = useState([
-    {
-      assign: 'Yunus',
-      issues: [
-        { title: 'ISSUE-101', comments: 'Login işlemi yazıldı' },
-        { title: 'ISSUE-102', comments: 'API endpoint test edildi' }
-      ]
-    },
-    {
-      assign: 'Can',
-      issues: [
-        { title: 'ISSUE-201', comments: 'UI tasarım tamamlandı' }
-      ]
-    }
-  ]);
+  const [aktifKodlananlar, setAktifKodlananlar] = useState([]);
 
   useEffect(() => {
     const grouped = {};
@@ -44,10 +29,23 @@ const Dashboard = ({ externalData = [] }) => {
   }, [externalData]);
 
   const handleCardClick = (issue) => {
-    // Aktif kolonda aynı ID varsa tekrar ekleme
     if (!activeIssues.find(item => item.id === issue.id)) {
       setActiveIssues([...activeIssues, issue]);
-      setActiveComment([...activeComment, []])
+      setActiveComment([...activeComment, []]);
+
+      setAktifKodlananlar(prev => {
+        const existing = prev.find(p => p.assign === issue.assignee);
+        const newIssue = { title: issue.title, comments: '' };
+        if (existing) {
+          return prev.map(p =>
+            p.assign === issue.assignee
+              ? { ...p, issues: [...p.issues, newIssue] }
+              : p
+          );
+        } else {
+          return [...prev, { assign: issue.assignee, issues: [newIssue] }];
+        }
+      });
     }
   };
 
@@ -56,37 +54,39 @@ const Dashboard = ({ externalData = [] }) => {
   };
 
   const handleComment = (e, id) => {
-    console.log(id)
-    postComment([...pComment, comment])
-    setActiveComment(prevItems => prevItems.map((item, index) => {
-      if (index === id) return [...item, comment]
-      return item
-    }))
-
-  };
-
-  const toggleSelected = (id) => {
-    setItems(prevItems =>
-      prevItems.map(item =>
-        item.id === id
-          ? { ...item, selected: true }  // sadece istediğin alanı değiştir
-          : item
+    postComment([...pComment, comment]);
+    setActiveComment(prevItems =>
+      prevItems.map((item, index) =>
+        index === id ? [...item, comment] : item
       )
     );
+
+    setAktifKodlananlar(prev =>
+      prev.map(p => {
+        const updatedIssues = p.issues.map((issue, i) => {
+          if (activeIssues[id]?.title === issue.title) {
+            return { ...issue, comments: comment };
+          }
+          return issue;
+        });
+        return { ...p, issues: updatedIssues };
+      })
+    );
   };
+
   const handleDailyPost = async () => {
     try {
       for (const block of aktifKodlananlar) {
         const payload = {
           assign: block.assign,
           issues: block.issues,
-          date: new Date().toISOString()
+          date: new Date().toISOString(),
         };
 
         await fetch(API_DAILY, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
+          body: JSON.stringify(payload),
         });
       }
       alert('Aktif işler MongoDB’ye kaydedildi');
@@ -138,14 +138,15 @@ const Dashboard = ({ externalData = [] }) => {
             >
               <div className="issue-title">{issue.title}</div>
               <div className="issue-assignee">{issue.assignee}</div>
-              {activeComment[ind] && activeComment[ind].map((item, index) => {
-                return <div className="issue-assignee">{index + 1}. {item}</div>
-              })}
-
+              {activeComment[ind] && activeComment[ind].map((item, index) => (
+                <div key={index} className="issue-assignee">
+                  {index + 1}. {item}
+                </div>
+              ))}
               <div className="issue-updated">
                 Güncellendi: {new Date(issue.updated).toLocaleString('tr-TR')}
               </div>
-              <textarea onChange={e => setCommnet(e.target.value)} name="" id="new-comment" cols="30" rows="5"></textarea>
+              <textarea onChange={e => setCommnet(e.target.value)} cols="30" rows="5"></textarea>
               <button onClick={(e) => handleComment(e, ind)}>Save post</button>
               <button
                 className="delete-button"
