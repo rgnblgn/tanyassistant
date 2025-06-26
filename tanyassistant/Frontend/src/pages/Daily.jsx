@@ -5,56 +5,72 @@ import './Daily.css';
 const API_DAILY = 'http://localhost:4000/api/daily';
 
 const Daily = () => {
-  const [data, setData] = useState([]);
+  const [records, setRecords] = useState([]);
 
   useEffect(() => {
     fetch(API_DAILY)
       .then(res => res.json())
-      .then(setData)
+      .then(data => setRecords(data))
       .catch(err => console.error('GET /api/daily failed:', err));
   }, []);
 
-  const grouped = {};
-  data.forEach(entry => {
-    const date = new Date(entry.date).toLocaleDateString('tr-TR');
-    if (!grouped[date]) grouped[date] = {};
-    if(!grouped[date][entry.assign]) grouped[date][entry.assign] = entry.issues;
-    else{
-        grouped[date][entry.assign] = [...grouped[date][entry.assign],entry.issues]
-    }
-    
+  const groupByDate = {};
+  records.forEach(record => {
+    const date = new Date(record.date).toLocaleDateString('tr-TR');
+    if (!groupByDate[date]) groupByDate[date] = [];
+    groupByDate[date].push(record);
   });
 
-  const dates = Object.keys(grouped);
-  const allAssignees = Array.from(
-    new Set(data.map(entry => entry.assign))
-  );
+  const uniqueAssigns = Array.from(new Set(records.map(r => r.assign)));
+
+  const handleDeleteGroup = (date) => {
+    const toDelete = groupByDate[date];
+    Promise.all(
+      toDelete.map(rec =>
+        fetch(`${API_DAILY}/${rec._id}`, {
+          method: 'DELETE'
+        })
+      )
+    )
+      .then(() => {
+        setRecords(records.filter(r => new Date(r.date).toLocaleDateString('tr-TR') !== date));
+      })
+      .catch(err => console.error('DELETE group failed:', err));
+  };
 
   return (
     <div className="daily-container">
-      <h2>Günlük Kodlama Takibi</h2>
-      <table>
+      <h2>Günlük Aktif Kodlama Takibi</h2>
+      <table className="daily-table">
         <thead>
           <tr>
             <th>Tarih</th>
-            {allAssignees.map(name => (
-              <th key={name}>{name}</th>
+            {uniqueAssigns.map(assign => (
+              <th key={assign}>{assign}</th>
             ))}
+            <th>İşlem</th>
           </tr>
         </thead>
         <tbody>
-          {dates.map(date => (
+          {Object.entries(groupByDate).map(([date, group]) => (
             <tr key={date}>
               <td>{date}</td>
-              {allAssignees.map(name => (
-                <td key={name}>
-                  {(grouped[date][name] || []).map((i, idx) => (
-                    <div key={idx}>
-                      <strong>{i.title}</strong>: {i.comments}
-                    </div>
-                  ))}
+              {uniqueAssigns.map(assign => (
+                <td key={assign}>
+                  {group
+                    .filter(g => g.assign === assign)
+                    .flatMap(g => g.issues)
+                    .map((i, idx) => (
+                      <div key={idx} className="issue-block">
+                        <strong>{i.title}</strong>
+                        <div>{i.comments}</div>
+                      </div>
+                    ))}
                 </td>
               ))}
+              <td>
+                <button className="delete-button" onClick={() => handleDeleteGroup(date)}>Sil</button>
+              </td>
             </tr>
           ))}
         </tbody>

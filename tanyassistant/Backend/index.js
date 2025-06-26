@@ -78,6 +78,11 @@ app.get('/api/daily', async (req, res) => {
   res.json(data);
 });
 
+app.delete('/api/daily/:id', async (req, res) => {
+  await Daily.findByIdAndDelete(req.params.id);
+  res.json({ message: 'Deleted' });
+});
+
 app.listen(PORT, () => {
   console.log(`Server çalışıyor: http://localhost:${PORT}`);
 });

@@ -1,115 +1,35 @@
-.meeting-container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 24px;
-  font-family: 'Segoe UI', sans-serif;
-  background-color: #f9fafb;
-}
-
-.meeting-title {
-  font-size: 28px;
-  font-weight: bold;
-  margin-bottom: 16px;
-}
-
-.create-button {
-  background-color: #4f46e5;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  cursor: pointer;
-  margin-bottom: 24px;
-}
-
-.create-button:hover {
-  background-color: #4338ca;
-}
-
 .note-form {
-  background-color: #ffffff;
-  border: 1px solid #e5e7eb;
+  background-color: #fffaf0;
+  border: 1px solid #ddd;
   padding: 16px;
-  border-radius: 12px;
-  margin-bottom: 24px;
-}
-
-.note-form input,
-.note-form textarea {
-  width: 100%;
-  margin-top: 8px;
-  margin-bottom: 12px;
-  padding: 10px;
-  border: 1px solid #cbd5e1;
   border-radius: 6px;
-  font-size: 14px;
-}
-
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-}
-
-.form-actions button {
-  padding: 8px 16px;
-  border: none;
-  font-size: 14px;
-  border-radius: 6px;
-  cursor: pointer;
-  background-color: #10b981;
-  color: white;
-}
-
-.form-actions .cancel {
-  background-color: #e11d48;
+  margin-top: 10px;
 }
 
 .note-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
 }
 
 .note-card {
-  background-color: #fef3c7;
-  padding: 16px;
-  border-radius: 10px;
+  background-color: #fff8e1;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 12px;
   cursor: pointer;
-  transition: box-shadow 0.2s ease;
-  border: 1px solid #fcd34d;
+  transition: box-shadow 0.2s;
 }
 
 .note-card:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.note-card h4 {
-  font-size: 16px;
-  font-weight: bold;
-  margin-bottom: 8px;
-}
-
-.note-card span {
-  font-size: 12px;
-  color: #6b7280;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
 .note-detail {
-  background-color: #ecfccb;
-  border: 1px solid #bbf7d0;
-  padding: 20px;
-  border-radius: 12px;
-  margin-top: 32px;
-}
-
-.note-detail h3 {
-  margin-bottom: 8px;
-}
-
-.note-detail .note-date {
-  font-size: 13px;
-  color: #4b5563;
-  margin-bottom: 12px;
+  margin-top: 20px;
+  background-color: #fffef4;
+  padding: 16px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
 }

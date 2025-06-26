@@ -40,6 +40,17 @@ const Meeting = () => {
       .catch(err => console.error('POST failed:', err));
   };
 
+  const handleDelete = (id) => {
+    fetch(`${API_URL}/${id}`, {
+      method: 'DELETE'
+    })
+      .then(() => {
+        setNotes(notes.filter(note => note._id !== id));
+        setSelectedNote(null);
+      })
+      .catch(err => console.error('DELETE failed:', err));
+  };
+
   return (
     <div className="meeting-container">
       <h2 className="meeting-title">Toplantı Notları</h2>
@@ -88,6 +99,7 @@ const Meeting = () => {
           <p className="note-date">{selectedNote.date}</p>
           <p>{selectedNote.content}</p>
           <button onClick={() => setSelectedNote(null)}>Kapat</button>
+          <button className="delete-button" onClick={() => handleDelete(selectedNote._id)}>Sil</button>
         </div>
       )}
     </div>

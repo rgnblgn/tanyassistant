@@ -24,8 +24,6 @@ const CsvUpload = ({ onDataParsed }) => {
             updated: new Date(row['Updated']).toISOString(),
             type: row['Issue Type'] || 'Task',
           }));
-                    console.log(mapped)
-
           onDataParsed(mapped);
           setError('');
         }

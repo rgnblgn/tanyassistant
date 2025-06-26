@@ -19,6 +19,8 @@ const Dashboard = ({ externalData = [] }) => {
   const [aktifKodlananlar, setAktifKodlananlar] = useState([]);
 
   useEffect(() => {
+    setAktifKodlananlar([])
+    setActiveIssues([])
     const grouped = {};
     statusOrder.forEach(status => (grouped[status] = []));
     externalData.forEach(issue => {
