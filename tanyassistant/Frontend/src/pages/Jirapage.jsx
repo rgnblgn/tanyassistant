@@ -40,6 +40,19 @@ const JiraPage = () => {
         }
     };
 
+    const deleteUser = async (username) => {
+        if (!window.confirm(`${username} silinsin mi?`)) return;
+
+        try {
+            await fetch(`${API_BASE}/saved-users/${username}`, {
+                method: 'DELETE',
+            });
+            setSavedUsers(prev => prev.filter(u => u !== username));
+        } catch (err) {
+            console.error('Silme hatası:', err);
+        }
+    };
+
     const handleSearch = async () => {
         await fetchUserIssues(username);
 
@@ -71,9 +84,12 @@ const JiraPage = () => {
 
             <div className="saved-users">
                 {savedUsers.map((user, i) => (
-                    <button key={i} onClick={() => fetchUserIssues(user)}>
-                        {user}
-                    </button>
+                    <div key={'users'+i}>
+                        <button key={'buttons'+i} onClick={() => fetchUserIssues(user)}>
+                            {user}
+                        </button>
+                        <button className="delete-btn" onClick={() => deleteUser(user)}>✕</button>
+                    </div>
                 ))}
             </div>
 

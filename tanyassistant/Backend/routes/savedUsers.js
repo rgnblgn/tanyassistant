@@ -13,6 +13,20 @@ router.get('/', async (req, res) => {
   }
 });
 
+router.delete('/:username', async (req, res) => {
+  const { username } = req.params;
+
+  try {
+    const deleted = await SavedUser.findOneAndDelete({ username });
+    if (!deleted) {
+      return res.status(404).json({ error: 'Kullanıcı bulunamadı' });
+    }
+    res.json({ message: 'Kullanıcı silindi', deleted });
+  } catch (err) {
+    res.status(500).json({ error: 'Silme sırasında hata oluştu', details: err });
+  }
+});
+
 // POST /api/saved-users
 router.post('/', async (req, res) => {
   const { username } = req.body;
