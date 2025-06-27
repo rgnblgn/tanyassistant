@@ -5,7 +5,7 @@ const cors = require('cors');
 require('dotenv').config();
 const aiRoute = require('./ai')
 const jiraRoute = require('./routes/jira');
-
+const savedUsersRoute = require('./routes/savedUsers');
 const app = express();
 const PORT = process.env.PORT || 4000;
 
@@ -27,6 +27,7 @@ const meetingSchema = new mongoose.Schema({
   date: String
 });
 
+
 const Meeting = mongoose.model('Meeting', meetingSchema);
 
 // Daily Model
@@ -44,6 +45,7 @@ const dailySchema = new mongoose.Schema({
 const Daily = mongoose.model('Daily', dailySchema);
 app.use('/api/ai', aiRoute);
 app.use('/api/jira', jiraRoute);
+app.use('/api/saved-users', savedUsersRoute);
 
 // Routes - Meeting
 app.get('/api/meetings', async (req, res) => {

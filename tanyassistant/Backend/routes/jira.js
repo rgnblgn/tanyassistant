@@ -33,9 +33,9 @@ router.get('/my-issues', async (req, res) => {
 
 router.get('/getUserIssues', async (req, res) => {
   const auth = Buffer.from(`${JIRA_USERNAME}:${JIRA_PASSWORD}`).toString('base64');
-    const userName = req.query.userName
+    const userName = req.query.username
   try {
-    const response = await axios.get(`${JIRA_BASE_URL}rest/api/2/search?jql=assignee=${userName}`, {
+    const response = await axios.get(`${JIRA_BASE_URL}rest/api/2/search?jql=assignee=${userName} AND resolution=Unresolved`, {
       headers: {
         'Authorization': `Basic ${auth}`,
         'Accept': 'application/json'

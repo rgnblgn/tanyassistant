@@ -1,44 +1,102 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import './JiraPage.css'; // İsteğe bağlı stil dosyası
 
+const API_BASE = 'http://localhost:4000/api';
+
+const statusOrder = ['Beklemede', 'Development', 'Test'];
+const statusColors = {
+    'Test': '#e0e0e0',
+    'Beklemede': '#bbdefb',
+    'Development': '#ffecb3'
+};
 const JiraPage = () => {
-  const [result, setResult] = useState(null);
-  const [error, setError] = useState('');
+    const [username, setUsername] = useState('');
+    const [savedUsers, setSavedUsers] = useState([]);
+    const [groupedIssues, setGroupedIssues] = useState({});
 
-  const handleGetMyIssues = async () => {
-    try {
-      const res = await fetch('http://localhost:4000/api/jira/my-issues');
-      const data = await res.json();
-      setResult(data);
-    } catch (err) {
-      console.error(err);
-      setError('Bir hata oluştu.');
-    }
-  };
+    // Saved usernames DB'den alınır
+    useEffect(() => {
+        fetch(`${API_BASE}/saved-users`)
+            .then(res => res.json())
+            .then(data => setSavedUsers(data))
+            .catch(err => console.error('Kısayol kullanıcılar alınamadı', err));
+    }, []);
 
-  const getUserIssues = async (userName) => {
-    try {
-      const res = await fetch('http://localhost:4000/api/jira/getUserIssues?userName='+userName);
-      const data = await res.json();
-      setResult(data);
-    } catch (err) {
-      console.error(err);
-      setError('Bir hata oluştu.');
-    }
-  };
+    const fetchUserIssues = async (name) => {
+        try {
+            const res = await fetch(`${API_BASE}/jira/getUserIssues?username=${name}`);
+            const data = await res.json();
 
-  return (
-    <div style={{ padding: '2rem' }}>
-      <h2>Jira API Test</h2>
-      <button onClick={handleGetMyIssues}>Benim Üzerimdeki İşleri Getir</button>
-      <button onClick={()=>getUserIssues('enes.karatas')}>Başkasının işini getir</button>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {result && (
-        <pre style={{ background: '#f5f5f5', padding: '1rem' }}>
-          {JSON.stringify(result, null, 2)}
-        </pre>
-      )}
-    </div>
-  );
+            const grouped = {};
+            statusOrder.forEach(status => grouped[status] = []);
+            data?.issues.forEach(issue => {
+                const status = statusOrder.includes(issue.status) ? issue.status : 'Beklemede';
+                grouped[status].push(issue);
+            });
+
+            setGroupedIssues(grouped);
+        } catch (error) {
+            console.error('Issue çekme hatası:', error);
+        }
+    };
+
+    const handleSearch = async () => {
+        await fetchUserIssues(username);
+
+        // DB'ye kullanıcıyı POST et
+        await fetch(`${API_BASE}/saved-users`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username })
+        });
+
+        // Yeni kullanıcıyı hemen göster
+        setSavedUsers(prev => [...new Set([...prev, username])]);
+        setUsername('');
+    };
+
+    return (
+        <div className="user-issues-container">
+            <h2>Kullanıcıya Ait Issue'lar</h2>
+
+            <div className="user-search">
+                <input
+                    type="text"
+                    placeholder="Kullanıcı adı girin (ör: ahmet.tire)"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                />
+                <button onClick={handleSearch}>Getir</button>
+            </div>
+
+            <div className="saved-users">
+                {savedUsers.map((user, i) => (
+                    <button key={i} onClick={() => fetchUserIssues(user)}>
+                        {user}
+                    </button>
+                ))}
+            </div>
+
+            <div className="issues-columns">
+                {statusOrder.map(status => (
+                    <div key={status} className="status-column">
+                        <h3 style={{ backgroundColor: statusColors[status] }}>{status}</h3>
+                        {groupedIssues[status]?.map(issue => (
+                            <div key={issue.id} className="issue-card">
+                                <strong>{issue.key}</strong>
+                                <div>{issue.fields.assignee.name}</div>
+                                <div>{issue.fields.summary}</div>
+
+                                <div>{issue.fields.description}</div>
+                                <div>{issue.assignee}</div>
+                                <div>{new Date(issue.fields.updated).toLocaleString('tr-TR')}</div>
+                            </div>
+                        ))}
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
 };
 
 export default JiraPage;
