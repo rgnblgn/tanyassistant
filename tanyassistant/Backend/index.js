@@ -3,7 +3,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
-
+const aiRoute = require('./ai')
+const jiraRoute = require('./routes/jira');
+const savedUsersRoute = require('./routes/savedUsers');
 const app = express();
 const PORT = process.env.PORT || 4000;
 
@@ -25,6 +27,7 @@ const meetingSchema = new mongoose.Schema({
   date: String
 });
 
+
 const Meeting = mongoose.model('Meeting', meetingSchema);
 
 // Daily Model
@@ -40,11 +43,38 @@ const dailySchema = new mongoose.Schema({
 });
 
 const Daily = mongoose.model('Daily', dailySchema);
+app.use('/api/ai', aiRoute);
+app.use('/api/jira', jiraRoute);
+app.use('/api/saved-users', savedUsersRoute);
 
 // Routes - Meeting
 app.get('/api/meetings', async (req, res) => {
   const meetings = await Meeting.find().sort({ date: -1 });
   res.json(meetings);
+});
+
+app.post('/generate', async (req, res) => {
+  const { prompt } = req.body;
+console.log("ergin",prompt)
+  try {
+    const response = await fetch('http://localhost:11434/api/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'mistral',
+        prompt,
+        stream: true
+      })
+    });
+console.log("bilgin",response)
+    const data = await response.json();
+    console.log("atiba",data)
+
+    res.json({ result: data.response });
+  } catch (err) {
+    console.error('AI error:', err);
+    res.status(500).json({ error: 'AI failed' });
+  }
 });
 
 app.post('/api/meetings', async (req, res) => {
