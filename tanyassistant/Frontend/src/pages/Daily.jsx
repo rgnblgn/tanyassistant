@@ -62,6 +62,12 @@ const Daily = () => {
                     .flatMap(g => g.issues)
                     .map((i, idx) => (
                       <div key={idx} className="issue-block">
+                        <a
+                          href={`${import.meta.env.VITE_API_URL}/browse/${i.key}`}
+                          target="_blank"
+                        >
+                          <strong>{i.key} </strong>
+                        </a>
                         <strong>{i.title}</strong>
                         <div>{i.comments}</div>
                       </div>

@@ -17,8 +17,8 @@ mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
-.then(() => console.log('MongoDB bağlantısı başarılı'))
-.catch((err) => console.error('MongoDB bağlantı hatası:', err));
+  .then(() => console.log('MongoDB bağlantısı başarılı'))
+  .catch((err) => console.error('MongoDB bağlantı hatası:', err));
 
 // Meeting Model
 const meetingSchema = new mongoose.Schema({
@@ -36,7 +36,8 @@ const dailySchema = new mongoose.Schema({
   issues: [
     {
       title: String,
-      comments: String
+      comments: String,
+      key: String
     }
   ],
   date: String
@@ -55,7 +56,7 @@ app.get('/api/meetings', async (req, res) => {
 
 app.post('/generate', async (req, res) => {
   const { prompt } = req.body;
-console.log("ergin",prompt)
+  console.log("ergin", prompt)
   try {
     const response = await fetch('http://localhost:11434/api/generate', {
       method: 'POST',
@@ -66,9 +67,9 @@ console.log("ergin",prompt)
         stream: true
       })
     });
-console.log("bilgin",response)
+    console.log("bilgin", response)
     const data = await response.json();
-    console.log("atiba",data)
+    console.log("atiba", data)
 
     res.json({ result: data.response });
   } catch (err) {

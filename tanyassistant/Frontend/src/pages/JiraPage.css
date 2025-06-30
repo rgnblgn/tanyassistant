@@ -12,13 +12,50 @@
   padding: 0.5rem 1rem;
 }
 
-.saved-users button {
-  margin: 0.25rem;
-  padding: 0.4rem 0.8rem;
-  background-color: #fff8e1;
-  border: 1px solid #ccc;
+.issue-card {
+  background-color: #fffefc;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+  height: 140px;
+  overflow: hidden;
+  transition: border 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
-  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.issue-card:hover {
+  border: 1px solid #ffd95c;
+  box-shadow: 0 2px 6px rgba(255, 217, 92, 0.3);
+}
+
+.status-column {
+  display: inline-block;
+  vertical-align: top;
+  width: 300px;
+  margin-right: 16px;
+}
+
+.issues-container {
+  margin-top: 12px;
+}
+
+
+.saved-users {
+  display: flex;
+  ;
+
+  button {
+    margin: 0.25rem;
+    padding: 0.4rem 0.8rem;
+    background-color: #fff8e1;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    border-radius: 4px;
+  }
 }
 
 .issues-columns {
@@ -32,12 +69,4 @@
   background-color: #f9f9f9;
   padding: 1rem;
   border-radius: 8px;
-}
-
-.issue-card {
-  border: 1px solid #ccc;
-  padding: 0.75rem;
-  margin-bottom: 0.5rem;
-  border-radius: 6px;
-  background-color: white;
 }
