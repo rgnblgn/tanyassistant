@@ -13,6 +13,10 @@ const JiraPage = () => {
     const [username, setUsername] = useState('');
     const [savedUsers, setSavedUsers] = useState([]);
     const [groupedIssues, setGroupedIssues] = useState({});
+    const [othersComment, setOthersComment] = useState('');
+    const [activeIssues, setActiveIssues] = useState([]);
+    const [commentMap, setCommentMap] = useState({});
+
 
     // Saved usernames DB'den alınır
     useEffect(() => {
@@ -22,6 +26,60 @@ const JiraPage = () => {
             .catch(err => console.error('Kısayol kullanıcılar alınamadı', err));
     }, []);
 
+    const handleIssueClick = (issue) => {
+        if (!activeIssues.find(item => item.id === issue.id)) {
+            setActiveIssues([...activeIssues, issue]);
+            setCommentMap(prev => ({ ...prev, [issue.id]: '' }));
+        }
+    };
+
+    const handleCommentChange = (id, value) => {
+        setCommentMap(prev => ({ ...prev, [id]: value }));
+    };
+
+
+    const handleSubmit = async () => {
+        const grouped = {};
+
+        activeIssues.forEach(issue => {
+            const assign = issue.fields.assignee?.name || 'Bilinmiyor';
+            if (!grouped[assign]) grouped[assign] = [];
+            grouped[assign].push({
+                title: issue.fields.summary,
+                comments: commentMap[issue.id] || ''
+            });
+        });
+
+        for (const [assign, issues] of Object.entries(grouped)) {
+            // othersComment varsa bu assign'a ekle
+            const payload = {
+                assign,
+                issues: [...issues],
+                date: new Date().toISOString()
+            };
+
+            if (othersComment.trim()) {
+                payload.issues.push({
+                    title: 'Genel Not',
+                    comments: othersComment.trim()
+                });
+            }
+
+            await fetch('http://localhost:4000/api/daily', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+        }
+
+        alert('Gönderildi');
+        setActiveIssues([]);
+        setCommentMap({});
+        setOthersComment('');
+    };
+
+
+
     const fetchUserIssues = async (name) => {
         try {
             const res = await fetch(`${API_BASE}/jira/getUserIssues?username=${name}`);
@@ -30,7 +88,7 @@ const JiraPage = () => {
             const grouped = {};
             statusOrder.forEach(status => grouped[status] = []);
             data?.issues.forEach(issue => {
-                const status = statusOrder.includes(issue.status) ? issue.status : 'Beklemede';
+                const status = statusOrder.includes(issue.fields.status.name) ? issue.fields.status.name : 'Beklemede';
                 grouped[status].push(issue);
             });
 
@@ -84,8 +142,8 @@ const JiraPage = () => {
 
             <div className="saved-users">
                 {savedUsers.map((user, i) => (
-                    <div key={'users'+i}>
-                        <button key={'buttons'+i} onClick={() => fetchUserIssues(user)}>
+                    <div key={'users' + i}>
+                        <button key={'buttons' + i} onClick={() => fetchUserIssues(user)}>
                             {user}
                         </button>
                         <button className="delete-btn" onClick={() => deleteUser(user)}>✕</button>
@@ -96,23 +154,61 @@ const JiraPage = () => {
             <div className="issues-columns">
                 {statusOrder.map(status => (
                     <div key={status} className="status-column">
-                        <h3 style={{ backgroundColor: statusColors[status] }}>{status}</h3>
+                        <h3 style={{ backgroundColor: statusColors[status] }}>
+                            {status} / {groupedIssues[status]?.length}
+                        </h3>
                         {groupedIssues[status]?.map(issue => (
-                            <div key={issue.id} className="issue-card">
+                            <div
+                                key={issue.id}
+                                className="issue-card"
+                                onClick={() => handleIssueClick(issue)}
+                            >
                                 <strong>{issue.key}</strong>
                                 <div>{issue.fields.assignee.name}</div>
                                 <div>{issue.fields.summary}</div>
-
                                 <div>{issue.fields.description}</div>
-                                <div>{issue.assignee}</div>
                                 <div>{new Date(issue.fields.updated).toLocaleString('tr-TR')}</div>
                             </div>
                         ))}
                     </div>
                 ))}
+
+                {/* Aktif Kodlanıyor Alanı */}
+                <div className="status-column">
+                    <h3 style={{ backgroundColor: '#fff8dc' }}>Aktif Kodlanıyor</h3>
+                    {activeIssues.map(issue => (
+                        <div key={issue.id} className="issue-card">
+                            <div><strong>{issue.key}</strong></div>
+                            <div>{issue.fields.assignee.name}</div>
+                            <div>{issue.fields.summary}</div>
+                            <textarea
+                                value={commentMap[issue.id] || ''}
+                                onChange={e => handleCommentChange(issue.id, e.target.value)}
+                                rows="3"
+                                placeholder="Yorum girin"
+                            />
+                            <button onClick={() => handleDelete(issue.id)}>Sil</button>
+                        </div>
+                    ))}
+                    {activeIssues.length > 0 && (
+                        <button onClick={handleSubmit} className="gonder-buton">
+                            Aktif Kodlananları Gönder
+                        </button>
+                    )}
+                    <div className="others-box">
+                        <h4>Diğer Notlar</h4>
+                        <textarea
+                            rows="3"
+                            placeholder="Ekstra notları buraya girin..."
+                            value={othersComment}
+                            onChange={(e) => setOthersComment(e.target.value)}
+                        />
+                    </div>
+                </div>
             </div>
         </div>
     );
+
 };
 
 export default JiraPage;

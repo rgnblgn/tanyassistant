@@ -12,13 +12,34 @@
   padding: 0.5rem 1rem;
 }
 
-.saved-users button {
-  margin: 0.25rem;
-  padding: 0.4rem 0.8rem;
-  background-color: #fff8e1;
+.issue-card {
   border: 1px solid #ccc;
-  cursor: pointer;
-  border-radius: 4px;
+  margin: 6px;
+  padding: 12px;
+  border-radius: 6px;
+  background: #fffef4;
+}
+.status-column {
+  display: inline-block;
+  vertical-align: top;
+  width: 300px;
+  margin-right: 16px;
+}
+.issues-container {
+  margin-top: 12px;
+}
+
+
+.saved-users {
+  display: flex;;
+  button {
+    margin: 0.25rem;
+    padding: 0.4rem 0.8rem;
+    background-color: #fff8e1;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    border-radius: 4px;
+}
 }
 
 .issues-columns {
