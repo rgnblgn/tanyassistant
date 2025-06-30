@@ -17,7 +17,6 @@ const JiraPage = () => {
     const [activeIssues, setActiveIssues] = useState([]);
     const [commentMap, setCommentMap] = useState({});
 
-
     // Saved usernames DB'den alınır
     useEffect(() => {
         fetch(`${API_BASE}/saved-users`)
@@ -46,7 +45,8 @@ const JiraPage = () => {
             if (!grouped[assign]) grouped[assign] = [];
             grouped[assign].push({
                 title: issue.fields.summary,
-                comments: commentMap[issue.id] || ''
+                comments: commentMap[issue.id] || '',
+                key: issue.key
             });
         });
 
@@ -178,7 +178,13 @@ const JiraPage = () => {
                     <h3 style={{ backgroundColor: '#fff8dc' }}>Aktif Kodlanıyor</h3>
                     {activeIssues.map(issue => (
                         <div key={issue.id} className="issue-card">
-                            <div><strong>{issue.key}</strong></div>
+                            <a
+                                href={`${import.meta.env.VITE_API_URL}/browse/${issue.key}`}
+                                target="_blank"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                <strong>{issue.key}</strong>
+                            </a>
                             <div>{issue.fields.assignee.name}</div>
                             <div>{issue.fields.summary}</div>
                             <textarea
