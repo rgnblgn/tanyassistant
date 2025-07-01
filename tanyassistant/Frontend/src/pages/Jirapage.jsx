@@ -16,6 +16,8 @@ const JiraPage = () => {
     const [othersComment, setOthersComment] = useState('');
     const [activeIssues, setActiveIssues] = useState([]);
     const [commentMap, setCommentMap] = useState({});
+    const [otherNote, setOtherNote] = useState('');
+
 
     // Saved usernames DB'den alınır
     useEffect(() => {
@@ -31,6 +33,34 @@ const JiraPage = () => {
             setCommentMap(prev => ({ ...prev, [issue.id]: '' }));
         }
     };
+
+    const handleOtherNoteSubmit = async () => {
+        if (!username || !otherNote.trim()) return alert("Kullanıcı adı veya not boş olamaz.");
+
+        const payload = {
+            assign: username,
+            issues: [
+                {
+                    title: 'Diğer Not',
+                    comments: otherNote.trim()
+                }
+            ],
+            date: new Date().toISOString()
+        };
+
+        try {
+            await fetch('http://localhost:4000/api/daily', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            alert('Diğer not MongoDB’ye kaydedildi');
+            setOtherNote('');
+        } catch (err) {
+            console.error('Diğer not POST hatası:', err);
+        }
+    };
+
 
     const handleCommentChange = (id, value) => {
         setCommentMap(prev => ({ ...prev, [id]: value }));
@@ -81,6 +111,7 @@ const JiraPage = () => {
 
 
     const fetchUserIssues = async (name) => {
+        setUsername(name);
         try {
             const res = await fetch(`${API_BASE}/jira/getUserIssues?username=${name}`);
             const data = await res.json();
@@ -196,20 +227,22 @@ const JiraPage = () => {
                             <button onClick={() => handleDelete(issue.id)}>Sil</button>
                         </div>
                     ))}
+                    <div className="other-note-box">
+                        <h4>Diğer Notlar</h4>
+                        <textarea
+                            rows="4"
+                            placeholder="Bu kullanıcıya ait ek notlar..."
+                            value={otherNote}
+                            onChange={(e) => setOtherNote(e.target.value)}
+                        />
+                        <button onClick={handleOtherNoteSubmit}>Gönder</button>
+                    </div>
                     {activeIssues.length > 0 && (
                         <button onClick={handleSubmit} className="gonder-buton">
                             Aktif Kodlananları Gönder
                         </button>
                     )}
-                    <div className="others-box">
-                        <h4>Diğer Notlar</h4>
-                        <textarea
-                            rows="3"
-                            placeholder="Ekstra notları buraya girin..."
-                            value={othersComment}
-                            onChange={(e) => setOthersComment(e.target.value)}
-                        />
-                    </div>
+
                 </div>
             </div>
         </div>
