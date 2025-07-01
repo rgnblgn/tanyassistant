@@ -174,7 +174,7 @@ const JiraPage = () => {
                 ))}
 
                 {/* Aktif Kodlanıyor Alanı */}
-                <div className="status-column">
+                <div className="status-column active-coding">
                     <h3 style={{ backgroundColor: '#fff8dc' }}>Aktif Kodlanıyor</h3>
                     {activeIssues.map(issue => (
                         <div key={issue.id} className="issue-card">
