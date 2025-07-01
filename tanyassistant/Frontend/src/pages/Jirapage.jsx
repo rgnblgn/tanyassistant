@@ -111,9 +111,15 @@ const JiraPage = () => {
 
 
     const fetchUserIssues = async (name) => {
+        let token = localStorage.getItem('authToken')
         setUsername(name);
         try {
-            const res = await fetch(`${API_BASE}/jira/getUserIssues?username=${name}`);
+            const res = await fetch(`${API_BASE}/jira/getUserIssues?username=${name}`, {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
             const data = await res.json();
 
             const grouped = {};

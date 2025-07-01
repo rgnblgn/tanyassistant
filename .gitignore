@@ -3696,6 +3696,9 @@ tanyassistant/Frontend/node_modules/yocto-queue/license
 tanyassistant/Frontend/node_modules/yocto-queue/package.json
 tanyassistant/Frontend/node_modules/yocto-queue/readme.md
 tanyassistant/Backend/.env
+tanyassistant/Frontend/node_modules/
+tanyassistant/Backend/node_modules/
+tanyassistant/Frontend/dist/
 
 tanyassistant/Backend/node_modules/.package-lock.json
 tanyassistant/Backend/node_modules/@mongodb-js/saslprep/LICENSE
