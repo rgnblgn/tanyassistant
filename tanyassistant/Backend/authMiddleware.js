@@ -7,7 +7,7 @@ const authMiddleware = async (req, res, next) => {
 
     if (!token) return res.status(401).json({ error: 'Token missing' });
 
-    const { email } = sessionStore.get(token);
+    const { email } = await sessionStore.get(token);
     if (!email) return res.status(401).json({ error: 'Invalid session token' });
 
     const user = await User.findOne({ email });
