@@ -1,53 +1,27 @@
-const axios = require('axios');
-const https = require('https');
+// routes/jira.js
 const express = require('express');
-
+const https = require('https');
+const axios = require('axios');
 const router = express.Router();
+const authMiddleware = require('../authMiddleware');
+const agent = new https.Agent({ rejectUnauthorized: false }); // Sertifika doğrulamasını kapat
+router.get('/getUserIssues', authMiddleware, async (req, res) => {
+  const { jiraUsername, jiraPassword, jiraBaseUrl } = req.user;
+  const username = req.query.username
 
-const JIRA_EMAIL = process.env.JIRA_EMAIL;
-const JIRA_API_TOKEN = process.env.JIRA_API_TOKEN;
-const JIRA_BASE_URL = process.env.JIRA_BASE_URL;
-const JIRA_PASSWORD = process.env.JIRA_PASSWORD;
-const JIRA_USERNAME = process.env.JIRA_USERNAME;
-
-const httpsAgent = new https.Agent({ rejectUnauthorized: false }); // Sertifika doğrulamasını kapat
-
-router.get('/my-issues', async (req, res) => {
-  const auth = Buffer.from(`${JIRA_USERNAME}:${JIRA_PASSWORD}`).toString('base64');
-
+  const auth = Buffer.from(`${jiraUsername}:${jiraPassword}`).toString('base64');
+  const fetchUrl = `${jiraBaseUrl}rest/api/2/search?jql=assignee=${username} AND resolution=Unresolved`;
   try {
-    const response = await axios.get(`${JIRA_BASE_URL}rest/api/2/myself`, {
+    const result = await axios.get(fetchUrl, {
       headers: {
-        'Authorization': `Basic ${auth}`,
-        'Accept': 'application/json'
+        Authorization: `Basic ${auth}`,
+        Accept: 'application/json',
       },
-      httpsAgent // burası önemli
+      httpsAgent: agent
     });
-
-    res.json(response.data);
+    res.json(result.data);
   } catch (err) {
-    console.error('Jira API error:', err.message);
-    res.status(500).json({ error: 'Jira API çağrısı başarısız' });
-  }
-});
-
-router.get('/getUserIssues', async (req, res) => {
-  const auth = Buffer.from(`${JIRA_USERNAME}:${JIRA_PASSWORD}`).toString('base64');
-  const userName = req.query.username
-  console.log(`${JIRA_BASE_URL}rest/api/2/search?jql=assignee=${userName}&resolution=Unresolved`)
-  try {
-    const response = await axios.get(`${JIRA_BASE_URL}rest/api/2/search?jql=assignee=${userName} AND resolution=Unresolved`, {
-      headers: {
-        'Authorization': `Basic ${auth}`,
-        'Accept': 'application/json'
-      },
-      httpsAgent // burası önemli
-    });
-
-    res.json(response.data);
-  } catch (err) {
-    console.error('Jira API error:', err.message);
-    res.status(500).json({ error: 'Jira API çağrısı başarısız' });
+    res.status(500).json({ error: 'Jira API error', details: err.message });
   }
 });
 

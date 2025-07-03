@@ -41,25 +41,39 @@
 .saved-users {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 2rem;
+  gap: 12px;
+  margin: 16px 0;
 }
 
 .saved-users div {
   display: flex;
   align-items: center;
-  background-color: #fff5cc;
-  border-radius: 8px;
-  padding: 0.3rem 0.6rem;
+  background-color: #fffde7;
+  border: 1px solid #fdd835;
+  padding: 6px 12px;
+  border-radius: 6px;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.saved-users div:hover {
+  transform: translateY(-2px);
 }
 
 .saved-users button {
   background: none;
   border: none;
+  margin-left: 8px;
+  font-size: 1rem;
+  color: #d32f2f;
   cursor: pointer;
-  margin: 0 0.2rem;
-  font-weight: bold;
+  transition: color 0.2s ease;
 }
+
+.saved-users button:hover {
+  color: #b71c1c;
+}
+
 
 .delete-btn {
   color: #ff5252;

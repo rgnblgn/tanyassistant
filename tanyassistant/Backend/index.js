@@ -6,6 +6,8 @@ require('dotenv').config();
 const aiRoute = require('./ai')
 const jiraRoute = require('./routes/jira');
 const savedUsersRoute = require('./routes/savedUsers');
+const auth = require('./middleware/auth');
+
 const app = express();
 const PORT = process.env.PORT || 4000;
 
@@ -47,6 +49,8 @@ const Daily = mongoose.model('Daily', dailySchema);
 app.use('/api/ai', aiRoute);
 app.use('/api/jira', jiraRoute);
 app.use('/api/saved-users', savedUsersRoute);
+app.use('/api/auth', auth);
+
 
 // Routes - Meeting
 app.get('/api/meetings', async (req, res) => {
@@ -56,7 +60,6 @@ app.get('/api/meetings', async (req, res) => {
 
 app.post('/generate', async (req, res) => {
   const { prompt } = req.body;
-  console.log("ergin", prompt)
   try {
     const response = await fetch('http://localhost:11434/api/generate', {
       method: 'POST',
@@ -67,9 +70,7 @@ app.post('/generate', async (req, res) => {
         stream: true
       })
     });
-    console.log("bilgin", response)
     const data = await response.json();
-    console.log("atiba", data)
 
     res.json({ result: data.response });
   } catch (err) {
