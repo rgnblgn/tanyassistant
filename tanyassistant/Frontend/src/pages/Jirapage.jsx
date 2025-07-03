@@ -163,6 +163,10 @@ const JiraPage = () => {
         setUsername('');
     };
 
+    const handleDelete = (id) => {
+        setActiveIssues(activeIssues.filter(item => item.id !== id));
+    };
+
     return (
         <div className="user-issues-container">
             <h2>Kullanıcıya Ait Issue'lar</h2>

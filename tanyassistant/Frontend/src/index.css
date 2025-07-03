@@ -27,7 +27,8 @@ button:hover {
   background-color: #ffca28;
 }
 
-input, textarea {
+input,
+textarea {
   width: 100%;
   padding: 8px;
   margin: 6px 0;
@@ -73,7 +74,7 @@ input, textarea {
   border: 1px solid #ddd;
   border-radius: 6px;
   padding: 10px;
-  box-shadow: 1px 1px 4px rgba(0,0,0,0.05);
+  box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.05);
   margin-bottom: 10px;
 }
 
@@ -82,7 +83,9 @@ input, textarea {
   margin-bottom: 4px;
 }
 
-.issue-assignee, .issue-updated, .note-date {
+.issue-assignee,
+.issue-updated,
+.note-date {
   font-size: 0.9em;
   color: #6c6c6c;
   margin-bottom: 4px;
@@ -132,4 +135,44 @@ input, textarea {
   margin-top: 10px;
   font-size: 0.9rem;
   color: #5e5e5e;
+}
+
+/* Global CSS'e ekle */
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(90deg, #fff8e1, #fff3cd);
+  padding: 12px 24px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 0 0 10px 10px;
+}
+
+nav .nav-links {
+  display: flex;
+  gap: 16px;
+}
+
+nav .nav-links a {
+  text-decoration: none;
+  color: #5d4037;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+nav .nav-links a:hover {
+  background-color: #fdd835;
+  color: black;
+}
+
+nav .logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: bold;
+  color: #795548;
+  font-size: 1.1rem;
+  text-decoration: none;
 }
