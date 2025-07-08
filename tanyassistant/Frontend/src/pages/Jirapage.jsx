@@ -167,6 +167,26 @@ const JiraPage = () => {
         setActiveIssues(activeIssues.filter(item => item.id !== id));
     };
 
+    const getProgress = (issue) => {
+        const estimate = issue.fields.timeoriginalestimate || 0;
+        const spent = issue.fields.timespent || 0;
+        const progress = estimate > 0 ? Math.round((spent / estimate) * 100) : 0;
+        return progress
+    }
+
+    const getProgressColor = (progress) => {
+        if (progress < 70) return '#5cb85c';       // Yeşil
+        if (progress < 100) return '#f0ad4e';      // Turuncu
+        if (progress === 100) return '#0275d8';    // Mavi
+        return '#d9534f';                          // Kırmızı
+    };
+
+    const getProgressLabel = (progress) => {
+        if (progress <= 100) return `${progress}% logged`;
+        const over = progress - 100;
+        return `${progress}% logged (+${over}% over)`;
+    };
+
     return (
         <div className="user-issues-container">
             <h2>Kullanıcıya Ait Issue'lar</h2>
@@ -207,7 +227,14 @@ const JiraPage = () => {
                                 <strong>{issue.key}</strong>
                                 <div>{issue.fields.assignee.name.toLowerCase()}</div>
                                 <div>{issue.fields.summary}</div>
-                                <div>{issue.fields.description}</div>
+                                <div className="progress-bar">
+                                    <div
+                                        className="progress-fill"
+                                        style={{ width: `${Math.min(getProgress(issue), 200)}%`, backgroundColor: getProgressColor(getProgress(issue)) }}
+                                    />
+                                </div>
+                                <div className="progress-label">{getProgressLabel(getProgress(issue))}</div>
+
                                 <div>{new Date(issue.fields.updated).toLocaleString('tr-TR')}</div>
                             </div>
                         ))}

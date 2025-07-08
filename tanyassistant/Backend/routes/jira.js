@@ -15,7 +15,7 @@ router.get('/getUserIssues', authMiddleware, async (req, res) => {
   const username = req.query.username
 
   const auth = Buffer.from(`${jiraUsername}:${jiraPassword}`).toString('base64');
-  const fetchUrl = `${jiraBaseUrl}rest/api/2/search?jql=assignee=${username} AND resolution=Unresolved`;
+  const fetchUrl = `${jiraBaseUrl}rest/api/2/search?jql=assignee=${username} AND resolution=Unresolved&maxResults=200`;
   try {
     const result = await axios.get(fetchUrl, {
       headers: {
