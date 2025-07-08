@@ -2,13 +2,18 @@
 import React, { useState } from 'react';
 
 const Teams = () => {
-
+    const API_BASE = 'http://localhost:4000/api';
     const handleButton = async () => {
+        let token = localStorage.getItem('authToken')
 
-        fetch('http://localhost:4000/api/teams')
-            .then(res => res.json())
-            .then(data => setRecords(data))
-            .catch(err => console.error('GET /api/teams failed:', err));
+        const res = await fetch(`http://localhost:4000/api/jira/getAllStatus`, {
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        const data = await res.json();
+        console.log(data)
     }
 
 

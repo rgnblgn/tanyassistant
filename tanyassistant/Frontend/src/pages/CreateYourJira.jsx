@@ -9,7 +9,7 @@ const statusColors = {
     'Beklemede': '#bbdefb',
     'Development': '#ffecb3'
 };
-const JiraPage = () => {
+const CreateyourJira = () => {
     const [username, setUsername] = useState('');
     const [savedUsers, setSavedUsers] = useState([]);
     const [groupedIssues, setGroupedIssues] = useState({});
@@ -17,6 +17,15 @@ const JiraPage = () => {
     const [activeIssues, setActiveIssues] = useState([]);
     const [commentMap, setCommentMap] = useState({});
     const [otherNote, setOtherNote] = useState('');
+    const [availableStatuses, setAvailableStatuses] = useState([]);
+    const [statusMapping, setStatusMapping] = useState(() => {
+        return JSON.parse(localStorage.getItem('statusMapping')) || {
+            'To Do': 'To Do',
+            'In Progress': 'In Progress',
+            'Code Review': 'Code Review',
+            'Done': 'Done'
+        };
+    });
 
 
     // Saved usernames DB'den alınır
@@ -25,6 +34,13 @@ const JiraPage = () => {
             .then(res => res.json())
             .then(data => setSavedUsers(data))
             .catch(err => console.error('Kısayol kullanıcılar alınamadı', err));
+        fetchStatuses();
+    }, []);
+
+    useEffect(() => {
+
+        fetchUserStatusMapping();
+
     }, []);
 
     const handleIssueClick = (issue) => {
@@ -38,7 +54,7 @@ const JiraPage = () => {
         if (!username || !otherNote.trim()) return alert("Kullanıcı adı veya not boş olamaz.");
 
         const payload = {
-            assign: username.toLowerCase(),
+            assign: username,
             issues: [
                 {
                     title: 'Diğer Not',
@@ -83,7 +99,7 @@ const JiraPage = () => {
         for (const [assign, issues] of Object.entries(grouped)) {
             // othersComment varsa bu assign'a ekle
             const payload = {
-                assign: assign.toLowerCase(),
+                assign,
                 issues: [...issues],
                 date: new Date().toISOString()
             };
@@ -167,6 +183,51 @@ const JiraPage = () => {
         setActiveIssues(activeIssues.filter(item => item.id !== id));
     };
 
+    const fetchStatuses = async () => {
+        let token = localStorage.getItem('authToken')
+
+        const res = await fetch(`http://localhost:4000/api/jira/getAllStatus`, {
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        const data = await res.json();
+        setAvailableStatuses(data || []);
+        console.log(availableStatuses)
+    }
+
+
+    // Kullanıcının mapping'ini çek
+    const fetchUserStatusMapping = async () => {
+        const res = await fetch(`http://localhost:4000/api/jira/status-mapping`, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('authToken')}`
+            }
+        });
+        const data = await res.json();
+        setStatusMapping(data);
+    };
+
+    // Mapping'i kaydet
+    const saveUserStatusMapping = async (username, newMapping) => {
+        await fetch(`http://localhost:4000/api/jira/status-mapping`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('authToken')}`
+            },
+            body: JSON.stringify({ username, mapping: newMapping }),
+        });
+    };
+
+    const handleStatusChange = (column, selectedStatus) => {
+        const updated = { ...statusMapping, [column]: selectedStatus };
+        setStatusMapping(updated);
+        saveUserStatusMapping(username, updated);
+    };
+
+
     return (
         <div className="user-issues-container">
             <h2>Kullanıcıya Ait Issue'lar</h2>
@@ -193,26 +254,40 @@ const JiraPage = () => {
             </div>
 
             <div className="issues-columns">
-                {statusOrder.map(status => (
-                    <div key={status} className="status-column">
-                        <h3 style={{ backgroundColor: statusColors[status] }}>
-                            {status} / {groupedIssues[status]?.length}
-                        </h3>
-                        {groupedIssues[status]?.map(issue => (
-                            <div
-                                key={issue.id}
-                                className="issue-card"
-                                onClick={() => handleIssueClick(issue)}
+                {Object.keys(statusMapping).map(column => (
+                    <div key={column} className="status-column">
+                        <div className="status-header">
+                            <h3>{column}</h3>
+                            <select
+                                value={statusMapping[column]}
+                                onChange={(e) => handleStatusChange(column, e.target.value)}
                             >
-                                <strong>{issue.key}</strong>
-                                <div>{issue.fields.assignee.name.toLowerCase()}</div>
+                                {availableStatuses.map((status, i) => (
+                                    <option key={i} value={status.name}>{status.name}</option>
+                                ))}
+                            </select>
+                        </div>
+
+                        {groupedIssues[statusMapping[column]]?.map(issue => (
+                            <div key={issue.id} className="issue-card">
+                                <strong>
+                                    <a
+                                        href={`${API_BASE}/browse/${issue.key}`}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        onClick={(e) => e.stopPropagation()}
+                                    >
+                                        {issue.key}
+                                    </a>
+                                </strong>
+                                <div>{issue.fields.assignee?.displayName}</div>
                                 <div>{issue.fields.summary}</div>
-                                <div>{issue.fields.description}</div>
                                 <div>{new Date(issue.fields.updated).toLocaleString('tr-TR')}</div>
                             </div>
                         ))}
                     </div>
                 ))}
+
 
                 {/* Aktif Kodlanıyor Alanı */}
                 <div className="status-column active-coding">
@@ -226,7 +301,7 @@ const JiraPage = () => {
                             >
                                 <strong>{issue.key}</strong>
                             </a>
-                            <div>{issue.fields.assignee.name.toLowerCase()}</div>
+                            <div>{issue.fields.assignee.name}</div>
                             <div>{issue.fields.summary}</div>
                             <textarea
                                 value={commentMap[issue.id] || ''}
@@ -260,4 +335,4 @@ const JiraPage = () => {
 
 };
 
-export default JiraPage;
+export default CreateyourJira;

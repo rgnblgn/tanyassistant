@@ -45,7 +45,7 @@ const Dashboard = ({ externalData = [] }) => {
               : p
           );
         } else {
-          return [...prev, { assign: issue.assignee, issues: [newIssue] }];
+          return [...prev, { assign: issue.assignee.toLowerCase(), issues: [newIssue] }];
         }
       });
     }
@@ -80,7 +80,7 @@ const Dashboard = ({ externalData = [] }) => {
     try {
       for (const block of aktifKodlananlar) {
         const payload = {
-          assign: block.assign,
+          assign: block.assign.toLowerCase(),
           issues: block.issues,
           date: new Date().toISOString(),
         };
@@ -118,7 +118,7 @@ const Dashboard = ({ externalData = [] }) => {
                 onClick={() => handleCardClick(issue)}
               >
                 <div className="issue-title">{issue.title}</div>
-                <div className="issue-assignee">{issue.assignee}</div>
+                <div className="issue-assignee">{issue.assignee.toLowerCase()}</div>
                 <div className="issue-updated">
                   Güncellendi: {new Date(issue.updated).toLocaleString('tr-TR')}
                 </div>
@@ -139,7 +139,7 @@ const Dashboard = ({ externalData = [] }) => {
               className="issue-card"
             >
               <div className="issue-title">{issue.title}</div>
-              <div className="issue-assignee">{issue.assignee}</div>
+              <div className="issue-assignee">{issue.assignee.toLowerCase()}</div>
               {activeComment[ind] && activeComment[ind].map((item, index) => (
                 <div key={index} className="issue-assignee">
                   {index + 1}. {item}

@@ -8,6 +8,7 @@ import AiNotes from './pages/aiNotes';
 import JiraPage from './pages/Jirapage';
 import Login from './pages/Login';
 import Teams from './pages/teams';
+import CreateYourJira from './pages/CreateYourJira'
 
 const App = () => {
   const navigate = useNavigate();
@@ -26,6 +27,8 @@ const App = () => {
           <Link to="/daily" style={{ marginRight: '20px' }}>Daily</Link>
           <Link to="/aiNotes">Ai Notes</Link>
           <Link to="/teams" style={{ marginRight: '20px' }}>Teams</Link>
+          <Link to="/createYourJira" style={{ marginRight: '20px' }}>createYourJira</Link>
+
           <Link to="/csv" style={{ marginRight: '20px' }}>CSV ile Yükle</Link>
 
 
@@ -49,6 +52,8 @@ const App = () => {
         <Route path="/daily" element={isLoggedIn ? <Daily /> : <Navigate to="/login" />} />
         <Route path="/aiNotes" element={isLoggedIn ? <AiNotes /> : <Navigate to="/login" />} />
         <Route path="/teams" element={isLoggedIn ? <Teams /> : <Navigate to="/login" />} />
+        <Route path="/createYourJira" element={isLoggedIn ? <CreateYourJira /> : <Navigate to="/login" />} />
+
 
 
       </Routes>
