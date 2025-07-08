@@ -7,18 +7,19 @@ const AiNotes = () => {
 
   const handleAnalyze = async () => {
     try {
-      const res = await fetch('http://localhost:4000/generate', {
+      const res = await fetch('http://localhost:4000/api/ai/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           model: 'mistral', // Ollama modeli (mistral, llama2, vs.)
-          prompt: `Lütfen bu notu analiz et: ${input}`,
+          prompt: `Bu nottaki kodu belirtilen işleri ortaya çıkart: ${input}`,
           stream: false
         })
       });
 
       const data = await res.json();
-      setResponse(data.response);
+      console.log(data)
+      setResponse(data.result);
     } catch (error) {
       setResponse('❌ Hata oluştu: ' + error.message);
     }
