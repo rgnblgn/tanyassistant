@@ -38,7 +38,7 @@ const JiraPage = () => {
         if (!username || !otherNote.trim()) return alert("Kullanıcı adı veya not boş olamaz.");
 
         const payload = {
-            assign: username,
+            assign: username.toLowerCase(),
             issues: [
                 {
                     title: 'Diğer Not',
@@ -83,7 +83,7 @@ const JiraPage = () => {
         for (const [assign, issues] of Object.entries(grouped)) {
             // othersComment varsa bu assign'a ekle
             const payload = {
-                assign,
+                assign: assign.toLowerCase(),
                 issues: [...issues],
                 date: new Date().toISOString()
             };
@@ -205,7 +205,7 @@ const JiraPage = () => {
                                 onClick={() => handleIssueClick(issue)}
                             >
                                 <strong>{issue.key}</strong>
-                                <div>{issue.fields.assignee.name}</div>
+                                <div>{issue.fields.assignee.name.toLowerCase()}</div>
                                 <div>{issue.fields.summary}</div>
                                 <div>{issue.fields.description}</div>
                                 <div>{new Date(issue.fields.updated).toLocaleString('tr-TR')}</div>
@@ -226,7 +226,7 @@ const JiraPage = () => {
                             >
                                 <strong>{issue.key}</strong>
                             </a>
-                            <div>{issue.fields.assignee.name}</div>
+                            <div>{issue.fields.assignee.name.toLowerCase()}</div>
                             <div>{issue.fields.summary}</div>
                             <textarea
                                 value={commentMap[issue.id] || ''}

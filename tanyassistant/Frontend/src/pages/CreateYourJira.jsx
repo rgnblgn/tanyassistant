@@ -37,6 +37,12 @@ const CreateyourJira = () => {
         fetchStatuses();
     }, []);
 
+    useEffect(() => {
+
+        fetchUserStatusMapping();
+
+    }, []);
+
     const handleIssueClick = (issue) => {
         if (!activeIssues.find(item => item.id === issue.id)) {
             setActiveIssues([...activeIssues, issue]);
@@ -191,10 +197,34 @@ const CreateyourJira = () => {
         console.log(availableStatuses)
     }
 
+
+    // Kullanıcının mapping'ini çek
+    const fetchUserStatusMapping = async () => {
+        const res = await fetch(`http://localhost:4000/api/jira/status-mapping`, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('authToken')}`
+            }
+        });
+        const data = await res.json();
+        setStatusMapping(data);
+    };
+
+    // Mapping'i kaydet
+    const saveUserStatusMapping = async (username, newMapping) => {
+        await fetch(`http://localhost:4000/api/jira/status-mapping`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('authToken')}`
+            },
+            body: JSON.stringify({ username, mapping: newMapping }),
+        });
+    };
+
     const handleStatusChange = (column, selectedStatus) => {
         const updated = { ...statusMapping, [column]: selectedStatus };
         setStatusMapping(updated);
-        localStorage.setItem('statusMapping', JSON.stringify(updated));
+        saveUserStatusMapping(username, updated);
     };
 
 

@@ -4,7 +4,12 @@ const https = require('https');
 const axios = require('axios');
 const router = express.Router();
 const authMiddleware = require('../authMiddleware');
+const statusMapping = require('./statusMapping.js');
+
+
 const agent = new https.Agent({ rejectUnauthorized: false }); // Sertifika doğrulamasını kapat
+router.use('/status-mapping', statusMapping);
+
 router.get('/getUserIssues', authMiddleware, async (req, res) => {
   const { jiraUsername, jiraPassword, jiraBaseUrl } = req.user;
   const username = req.query.username
