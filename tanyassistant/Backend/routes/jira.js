@@ -83,6 +83,8 @@ router.get('/logs', authMiddleware, async (req, res) => {
           issueKey: issue.key,
           summary: issue.fields.summary,
           started: w.started,
+          dateOnly: moment(w.started).format('YYYY-MM-DD'), // Gün formatı
+          timeSpentSeconds: w.timeSpentSeconds,
           timeSpent: (w.timeSpentSeconds / 3600).toFixed(2) // saat olarak
         });
       });

@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import './LogWork.css'
+import LogWorkChart from '../components/LogWorkChart';
 
 const LogWork = () => {
     const [username, setUsername] = useState('');
     const [savedUsers, setSavedUsers] = useState([]);
     const [logs, setLogs] = useState([]);
     const [range, setRange] = useState('lastWeek');
+    const [chartData, setChartData] = useState([]);
 
     useEffect(() => {
         const saved = JSON.parse(localStorage.getItem('logUsers')) || [];
@@ -36,7 +38,23 @@ const LogWork = () => {
             }
         });
         const data = await res.json();
+
         setLogs(data.logs || []);
+        // 1. Grup işlemi: issueKey -> [log1, log2, ...]
+        const grouped = data.logs.reduce((acc, log) => {
+            if (!acc[log.issueKey]) acc[log.issueKey] = [];
+            acc[log.issueKey].push(log);
+            return acc;
+        }, {});
+
+        // 2. Toplam saatleri hesapla
+        const prepared = Object.entries(grouped).map(([key, logs]) => ({
+            key,
+            totalHours: logs.reduce((sum, log) => sum + parseFloat(log.timeSpent), 0)
+        }));
+
+        setChartData(prepared);
+
     };
 
     return (
@@ -65,16 +83,10 @@ const LogWork = () => {
                 ))}
             </div>
 
-            <div className="log-results">
-                {logs.length === 0 && <p>Kayıt bulunamadı.</p>}
-                {logs.map((log, index) => (
-                    <div key={index} className="log-card">
-                        <strong>{log.issueKey}</strong>
-                        <div>{log.summary}</div>
-                        <div>{log.timeSpent} saat</div>
-                        <div>{new Date(log.started).toLocaleDateString('tr-TR')}</div>
-                    </div>
-                ))}
+
+            <div>
+                <h2>Loglanmış Saatler</h2>
+                <LogWorkChart data={chartData} />
             </div>
         </div>
     );
