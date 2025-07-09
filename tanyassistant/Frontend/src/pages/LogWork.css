@@ -1,0 +1,18 @@
+.log-card {
+    background: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    margin: 10px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.saved-users button {
+    margin: 5px;
+    padding: 4px 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.saved-users button:hover {
+    background: #e0e0e0;
+}

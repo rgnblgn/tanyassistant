@@ -148,3 +148,23 @@
 .active-coding textarea {
   width: 95%;
 }
+
+.progress-bar {
+  height: 6px;
+  background: #eee;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.progress-fill {
+  height: 100%;
+  transition: width 0.4s ease;
+}
+
+.progress-label {
+  font-size: 12px;
+  margin-top: 4px;
+  color: #444;
+  text-align: right;
+}

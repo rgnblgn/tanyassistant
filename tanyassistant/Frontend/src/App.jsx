@@ -1,14 +1,13 @@
-// src/App.jsx
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate, useNavigate } from 'react-router-dom';
-import Home from './pages/Home';
 import Meeting from './pages/Meeting';
 import Daily from './pages/Daily';
-import AiNotes from './pages/aiNotes';
+import AiNotes from './pages/AiNotes';
 import JiraPage from './pages/Jirapage';
 import Login from './pages/Login';
 import Teams from './pages/teams';
 import CreateYourJira from './pages/CreateYourJira'
+import LogWork from './pages/LogWork.jsx'
 
 const App = () => {
   const navigate = useNavigate();
@@ -29,7 +28,7 @@ const App = () => {
           <Link to="/teams" style={{ marginRight: '20px' }}>Teams</Link>
           <Link to="/createYourJira" style={{ marginRight: '20px' }}>createYourJira</Link>
 
-          <Link to="/csv" style={{ marginRight: '20px' }}>CSV ile Yükle</Link>
+          <Link to="/logWork" style={{ marginRight: '20px' }}>LogWork</Link>
 
 
           {isLoggedIn && (
@@ -47,7 +46,7 @@ const App = () => {
       <Routes>
         <Route path="/login" element={<Login onLogin={() => { setIsLoggedIn(true); window.location.href = "/" }} />} />
         <Route path="/" element={isLoggedIn ? <JiraPage /> : <Navigate to="/login" />} />
-        <Route path="/csv" element={isLoggedIn ? <Home /> : <Navigate to="/login" />} />
+        <Route path="/logWork" element={isLoggedIn ? <LogWork /> : <Navigate to="/login" />} />
         <Route path="/meeting" element={isLoggedIn ? <Meeting /> : <Navigate to="/login" />} />
         <Route path="/daily" element={isLoggedIn ? <Daily /> : <Navigate to="/login" />} />
         <Route path="/aiNotes" element={isLoggedIn ? <AiNotes /> : <Navigate to="/login" />} />
