@@ -8,6 +8,8 @@ const LogWork = () => {
     const [logs, setLogs] = useState([]);
     const [range, setRange] = useState('lastWeek');
     const [chartData, setChartData] = useState([]);
+    const [totalUserHours, settotalUserHours] = useState(0);
+
 
     useEffect(() => {
         const saved = JSON.parse(localStorage.getItem('logUsers')) || [];
@@ -52,7 +54,8 @@ const LogWork = () => {
             key,
             totalHours: logs.reduce((sum, log) => sum + parseFloat(log.timeSpent), 0)
         }));
-
+        const totalUserHours = prepared.reduce((sum, item) => sum + item.totalHours || 0, 0)
+        settotalUserHours(totalUserHours)
         setChartData(prepared);
 
     };
@@ -85,7 +88,7 @@ const LogWork = () => {
 
 
             <div>
-                <h2>Loglanmış Saatler</h2>
+                <h2>Loglanmış Saatler : {totalUserHours}</h2>
                 <LogWorkChart data={chartData} />
             </div>
         </div>
