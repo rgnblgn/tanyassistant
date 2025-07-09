@@ -4,13 +4,15 @@ const router = express.Router();
 const crypto = require('crypto');
 const User = require('../models/User'); // MongoDB model
 const sessionStore = require('../sessionStore'); // Geçici session store (Redis önerilir)
+const authMiddleware = require('../authMiddleware');
+
 
 // Kullanıcı login endpoint
 router.post('/login', async (req, res) => {
     try {
-        const { jiraUsername, jiraPassword, jiraBaseUrl } = req.body;
+        const { jiraUsername, jiraPassword } = req.body;
         let email = jiraUsername
-        if (!jiraUsername || !jiraPassword || !jiraBaseUrl) {
+        if (!jiraUsername || !jiraPassword) {
             return res.status(400).json({ error: 'Eksik bilgi' });
         }
 
@@ -19,7 +21,6 @@ router.post('/login', async (req, res) => {
         const user = {
             email,
             authToken,
-            jiraBaseUrl,
             createdAt: new Date(),
             jiraUsername,
             jiraPassword
@@ -40,4 +41,22 @@ router.post('/login', async (req, res) => {
     }
 });
 
+
+router.post('/setJiraBaseUrl', authMiddleware, async (req, res) => {
+    try {
+        const { jiraBaseUrl } = req.body;
+
+        if (!jiraBaseUrl) {
+            return res.status(400).json({ error: 'Eksik bilgi' });
+        }
+
+        const user = req.user
+        const email = req.user.email
+        await User.updateOne({ email }, { $set: { jiraBaseUrl } });
+        res.json({ data: "İşlem tamam" });
+    } catch (err) {
+        console.error('Baseurl error:', err);
+        res.status(500).json({ error: 'Sunucu hatası' });
+    }
+});
 module.exports = router;

@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import './JiraPage.css'; // İsteğe bağlı stil dosyası
+import { AppContext } from '../AppContext';
+
 
 const API_BASE = 'http://localhost:4000/api';
 
@@ -26,7 +28,7 @@ const CreateyourJira = () => {
             'Done': 'Done'
         };
     });
-
+    const { baseUrl } = useContext(AppContext);
 
     // Saved usernames DB'den alınır
     useEffect(() => {
@@ -194,7 +196,6 @@ const CreateyourJira = () => {
         });
         const data = await res.json();
         setAvailableStatuses(data || []);
-        console.log(availableStatuses)
     }
 
 
@@ -295,7 +296,7 @@ const CreateyourJira = () => {
                     {activeIssues.map(issue => (
                         <div key={issue.id} className="issue-card">
                             <a
-                                href={`${import.meta.env.VITE_API_URL}/browse/${issue.key}`}
+                                href={`${baseUrl}/browse/${issue.key}`}
                                 target="_blank"
                                 onClick={(e) => e.stopPropagation()}
                             >

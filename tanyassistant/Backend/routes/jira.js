@@ -50,7 +50,6 @@ router.get('/logs', authMiddleware, async (req, res) => {
 
   const jql = `worklogAuthor = ${username} AND worklogDate >= "${startDate.format('YYYY-MM-DD')}"`;
   const url = `${jiraBaseUrl}rest/api/2/search?jql=${encodeURIComponent(jql)}&maxResults=1000`;
-  console.log(authToken)
   try {
     const result = await axios.get(url, {
       headers: {
