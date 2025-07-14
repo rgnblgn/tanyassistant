@@ -6,6 +6,7 @@ const User = require('../models/User'); // MongoDB model
 const sessionStore = require('../sessionStore'); // Geçici session store (Redis önerilir)
 const authMiddleware = require('../authMiddleware');
 
+const { encrypt } = require('../utils/encryption');
 
 // Kullanıcı login endpoint
 router.post('/login', async (req, res) => {
@@ -17,13 +18,14 @@ router.post('/login', async (req, res) => {
         }
 
         const authToken = Buffer.from(`${jiraUsername}:${jiraPassword}`).toString('base64');
+        const encryptedPassword = encrypt(jiraPassword); // Şifrelenmiş hali
 
         const user = {
             email,
             authToken,
             createdAt: new Date(),
             jiraUsername,
-            jiraPassword
+            jiraPassword: encryptedPassword
         };
 
         await User.updateOne(

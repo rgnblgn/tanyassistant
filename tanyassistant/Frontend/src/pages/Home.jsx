@@ -66,33 +66,39 @@ const Home = () => {
 
   return (
     <div>
-      {baseUrl && !isLoading &&
-        <div>BaseUrl = {baseUrl}
-          <div >
+      <div>
+        {baseUrl && !isLoading &&
+          <div>
+            <div className="baseurl-banner">
+              Aktif Jira Base URL: <strong>{baseUrl}</strong>
+            </div>
+            <div >
 
-            <div className="homepage-nav-links">
-              <Link to="/jira" >Jira Issues</Link>
-              <Link to="/meeting" >Meeting</Link>
-              <Link to="/daily" >Daily</Link>
-              <Link to="/aiNotes">Ai Notes</Link>
-              <Link to="/teams" >Teams</Link>
-              <Link to="/createYourJira" >createYourJira</Link>
-              <Link to="/logWork" >LogWork</Link>
+              <div className="homepage-nav-links">
+                <Link to="/jira" >Jira Issues</Link>
+                <Link to="/meeting" >Meeting</Link>
+                <Link to="/daily" >Daily</Link>
+                <Link to="/aiNotes">Ai Notes</Link>
+                <Link to="/teams" >Teams</Link>
+                <Link to="/createYourJira" >createYourJira</Link>
+                <Link to="/logWork" >LogWork</Link>
+              </div>
+
+
+              <Routes>
+                <Route path="/jira" element={<JiraPage />} />
+                <Route path="/logWork" element={<LogWork />} />
+                <Route path="/meeting" element={<Meeting />} />
+                <Route path="/daily" element={<Daily />} />
+                <Route path="/aiNotes" element={<AiNotes />} />
+                <Route path="/teams" element={<Teams />} />
+                <Route path="/createYourJira" element={<CreateYourJira />} />
+              </Routes>
             </div>
 
-
-            <Routes>
-              <Route path="/jira" element={<JiraPage />} />
-              <Route path="/logWork" element={<LogWork />} />
-              <Route path="/meeting" element={<Meeting />} />
-              <Route path="/daily" element={<Daily />} />
-              <Route path="/aiNotes" element={<AiNotes />} />
-              <Route path="/teams" element={<Teams />} />
-              <Route path="/createYourJira" element={<CreateYourJira />} />
-            </Routes>
           </div>
-        </div>
-      }
+        }
+      </div>
       {!baseUrl && !isLoading &&
         <div>
           <input

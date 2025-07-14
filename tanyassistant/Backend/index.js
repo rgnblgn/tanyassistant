@@ -64,43 +64,43 @@ app.use('/api/saved-users', savedUsersRoute);
 
 // Meeting Routes
 app.get('/api/meetings', authMiddleware, async (req, res) => {
-  const meetings = await Meeting.find({ owner: req.user.email }).sort({ date: -1 });
+  const meetings = await Meeting.find({ owner: req.user._id }).sort({ date: -1 });
   res.json(meetings);
 });
 
 app.post('/api/meetings', authMiddleware, async (req, res) => {
   const { title, content, date } = req.body;
-  const meeting = new Meeting({ owner: req.user.email, title, content, date });
+  const meeting = new Meeting({ owner: req.user._id, title, content, date });
   await meeting.save();
   res.status(201).json(meeting);
 });
 
 app.get('/api/meetings/:id', authMiddleware, async (req, res) => {
-  const meeting = await Meeting.findOne({ _id: req.params.id, owner: req.user.email });
+  const meeting = await Meeting.findOne({ _id: req.params.id, owner: req.user._id });
   if (!meeting) return res.status(404).json({ message: 'Not found' });
   res.json(meeting);
 });
 
 app.delete('/api/meetings/:id', authMiddleware, async (req, res) => {
-  await Meeting.deleteOne({ _id: req.params.id, owner: req.user.email });
+  await Meeting.deleteOne({ _id: req.params.id, owner: req.user._id });
   res.json({ message: 'Deleted' });
 });
 
 // Daily Routes
 app.get('/api/daily', authMiddleware, async (req, res) => {
-  const dailyData = await Daily.find({ owner: req.user.email }).sort({ date: -1 });
+  const dailyData = await Daily.find({ owner: req.user._id }).sort({ date: -1 });
   res.json(dailyData);
 });
 
 app.post('/api/daily', authMiddleware, async (req, res) => {
   const { assign, issues, date } = req.body;
-  const newRecord = new Daily({ owner: req.user.email, assign, issues, date });
+  const newRecord = new Daily({ owner: req.user._id, assign, issues, date });
   await newRecord.save();
   res.status(201).json(newRecord);
 });
 
 app.delete('/api/daily/:id', authMiddleware, async (req, res) => {
-  await Daily.deleteOne({ _id: req.params.id, owner: req.user.email });
+  await Daily.deleteOne({ _id: req.params.id, owner: req.user._id });
   res.json({ message: 'Deleted' });
 });
 

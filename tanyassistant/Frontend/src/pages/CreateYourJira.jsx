@@ -32,7 +32,13 @@ const CreateyourJira = () => {
 
     // Saved usernames DB'den alınır
     useEffect(() => {
-        fetch(`${API_BASE}/saved-users`)
+        const token = localStorage.getItem('authToken');
+
+        fetch(`${API_BASE}/saved-users`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
             .then(res => res.json())
             .then(data => setSavedUsers(data))
             .catch(err => console.error('Kısayol kullanıcılar alınamadı', err));

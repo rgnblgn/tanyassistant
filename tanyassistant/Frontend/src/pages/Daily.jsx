@@ -10,7 +10,13 @@ const Daily = () => {
   const { baseUrl } = useContext(AppContext);
 
   useEffect(() => {
-    fetch(API_DAILY)
+    const token = localStorage.getItem('authToken');
+
+    fetch(API_DAILY, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
       .then(res => res.json())
       .then(data => setRecords(data))
       .catch(err => console.error('GET /api/daily failed:', err));

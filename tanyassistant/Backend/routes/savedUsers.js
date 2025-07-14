@@ -7,7 +7,7 @@ const authMiddleware = require('../authMiddleware');
 // GET /api/saved-users - Kendi kayıtlı kullanıcılarını getir
 router.get('/', authMiddleware, async (req, res) => {
   try {
-    const users = await SavedUser.find({ owner: req.user.email });
+    const users = await SavedUser.find({ owner: req.user._id });
     const usernames = users.map(u => u.username);
     res.json(usernames);
   } catch (err) {
@@ -22,7 +22,7 @@ router.delete('/:username', authMiddleware, async (req, res) => {
   try {
     const deleted = await SavedUser.findOneAndDelete({
       username,
-      owner: req.user.email
+      owner: req.user._id
     });
 
     if (!deleted) {
@@ -45,14 +45,14 @@ router.post('/', authMiddleware, async (req, res) => {
     // Aynı kullanıcı daha önce bu kullanıcıya ait olarak eklenmiş mi?
     const existing = await SavedUser.findOne({
       username,
-      owner: req.user.email
+      owner: req.user._id
     });
 
     if (existing) return res.status(200).json({ message: 'Zaten kayıtlı' });
 
     const newUser = new SavedUser({
       username,
-      owner: req.user.email
+      owner: req.user._id
     });
 
     await newUser.save();

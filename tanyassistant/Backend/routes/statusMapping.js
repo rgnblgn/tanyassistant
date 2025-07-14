@@ -21,7 +21,7 @@ router.post('/', authMiddleware, async (req, res) => {
         { username },
         { $set: { mapping } },
         { upsert: true },
-        { owner: req.user.email }
+        { owner: req.user._id }
     );
     res.json({ success: true });
 });
