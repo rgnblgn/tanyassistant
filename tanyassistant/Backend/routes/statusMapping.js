@@ -20,7 +20,8 @@ router.post('/', authMiddleware, async (req, res) => {
     await StatusMapping.updateOne(
         { username },
         { $set: { mapping } },
-        { upsert: true }
+        { upsert: true },
+        { owner: req.user.email }
     );
     res.json({ success: true });
 });

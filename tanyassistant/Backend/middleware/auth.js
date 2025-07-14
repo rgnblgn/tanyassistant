@@ -59,4 +59,12 @@ router.post('/setJiraBaseUrl', authMiddleware, async (req, res) => {
         res.status(500).json({ error: 'Sunucu hatası' });
     }
 });
+
+router.get('/getJiraBaseUrl', authMiddleware, async (req, res) => {
+    if (req.user && req.user.jiraBaseUrl) {
+        res.send({ jiraBaseUrl: req.user.jiraBaseUrl })
+    } else {
+        res.send({ err: "jiraBaseUrl kayıtlı değil." })
+    }
+});
 module.exports = router;

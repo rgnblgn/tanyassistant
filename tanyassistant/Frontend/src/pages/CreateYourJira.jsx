@@ -37,6 +37,7 @@ const CreateyourJira = () => {
             .then(data => setSavedUsers(data))
             .catch(err => console.error('Kısayol kullanıcılar alınamadı', err));
         fetchStatuses();
+
     }, []);
 
     useEffect(() => {

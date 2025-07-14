@@ -1,8 +1,20 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { AppContext } from '../AppContext';
+import { BrowserRouter as Router, Routes, Route, Link, Navigate, useNavigate } from 'react-router-dom';
+import Meeting from './Meeting';
+import Daily from './Daily';
+import AiNotes from './AiNotes';
+import JiraPage from './Jirapage';
+import Teams from './teams';
+import CreateYourJira from './CreateYourJira'
+import LogWork from './LogWork.jsx'
+import './Home.css'
+
 
 const Home = () => {
   const [jiraBaseUrl, setJiraBaseUrl] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
   const { baseUrl, setBaseUrl } = useContext(AppContext);
 
   const handleJiraBaseUrl = async (e) => {
@@ -24,12 +36,64 @@ const Home = () => {
       alert(data.message || 'Baseurl failed');
     }
   };
+
+  useEffect(() => {
+    setIsLoading(true)
+    getJiraBaseUrl().then((res) => {
+      if (res.jiraBaseUrl) {
+        setBaseUrl(res.jiraBaseUrl)
+
+      } else {
+        setBaseUrl('')
+      }
+      setIsLoading(false)
+    })
+
+  }, [])
+
+  const getJiraBaseUrl = async () => {
+    let token = localStorage.getItem('authToken')
+
+    const res = await fetch('http://localhost:4000/api/auth/getJiraBaseUrl', {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    });
+    const data = await res.json()
+    console.log(data)
+
+    return data
+  }
+
   return (
     <div>
-      {baseUrl &&
-        <div>BaseUrl = {baseUrl}</div>
+      {baseUrl && !isLoading &&
+        <div>BaseUrl = {baseUrl}
+          <div >
+
+            <div className="homepage-nav-links">
+              <Link to="/jira" >Jira Issues</Link>
+              <Link to="/meeting" >Meeting</Link>
+              <Link to="/daily" >Daily</Link>
+              <Link to="/aiNotes">Ai Notes</Link>
+              <Link to="/teams" >Teams</Link>
+              <Link to="/createYourJira" >createYourJira</Link>
+              <Link to="/logWork" >LogWork</Link>
+            </div>
+
+
+            <Routes>
+              <Route path="/jira" element={<JiraPage />} />
+              <Route path="/logWork" element={<LogWork />} />
+              <Route path="/meeting" element={<Meeting />} />
+              <Route path="/daily" element={<Daily />} />
+              <Route path="/aiNotes" element={<AiNotes />} />
+              <Route path="/teams" element={<Teams />} />
+              <Route path="/createYourJira" element={<CreateYourJira />} />
+            </Routes>
+          </div>
+        </div>
       }
-      {!baseUrl &&
+      {!baseUrl && !isLoading &&
         <div>
           <input
             type="url"

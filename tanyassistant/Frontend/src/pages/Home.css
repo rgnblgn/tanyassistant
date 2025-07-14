@@ -1,0 +1,16 @@
+.homepage-nav-links {
+    display: flex;
+    justify-content: space-evenly;
+    padding: 50px;
+
+}
+
+.homepage-nav-links a {
+    display: block;
+    text-decoration: none;
+    width: 200px;
+    border: 1px solid green;
+    padding: 10px;
+    text-align: center;
+
+}
