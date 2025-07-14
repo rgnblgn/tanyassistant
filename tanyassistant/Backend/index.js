@@ -15,10 +15,12 @@ const auth = require('./middleware/auth');
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-app.use(cors({
-  origin: 'https://tanyassistant-1drcmmwcw-rgnblgns-projects.vercel.app',
+const corsOptions = {
+  origin: ['http://localhost:3000', 'https://tanyassistant.vercel.app'],
   credentials: true
-}));
+};
+app.use(cors(corsOptions));
+
 
 app.use(express.json());
 
