@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import './JiraPage.css'; // İsteğe bağlı stil dosyası
 import { AppContext } from '../AppContext';
 
-const API_BASE = 'http://localhost:4000/api';
+const API_BASE = 'https://tanyassistant.onrender.com/api';
 
 const statusOrder = ['Beklemede', 'Development', 'Test'];
 const statusColors = {

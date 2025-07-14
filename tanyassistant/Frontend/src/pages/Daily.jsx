@@ -3,7 +3,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import './Daily.css';
 import { AppContext } from '../AppContext';
 
-const API_DAILY = 'http://localhost:4000/api/daily';
+const API_DAILY = 'https://tanyassistant.onrender.com/api/daily';
 
 const Daily = () => {
   const [records, setRecords] = useState([]);

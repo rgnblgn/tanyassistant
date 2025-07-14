@@ -8,7 +8,7 @@ const statusColors = {
   'Development': '#ffecb3',
 };
 
-const API_DAILY = 'http://localhost:4000/api/daily';
+const API_DAILY = 'https://tanyassistant.onrender.com/api/daily';
 
 const Dashboard = ({ externalData = [] }) => {
   const [groupedIssues, setGroupedIssues] = useState({});

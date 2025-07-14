@@ -34,7 +34,7 @@ const LogWork = () => {
         if (!user) return;
         saveUser(user);
 
-        const res = await fetch(`http://localhost:4000/api/jira/logs?username=${user}&range=${range}`, {
+        const res = await fetch(`https://tanyassistant.onrender.com/api/jira/logs?username=${user}&range=${range}`, {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem('authToken')}`,
             }

@@ -3,7 +3,7 @@ import './JiraPage.css'; // İsteğe bağlı stil dosyası
 import { AppContext } from '../AppContext';
 
 
-const API_BASE = 'http://localhost:4000/api';
+const API_BASE = 'https://tanyassistant.onrender.com/api';
 
 const statusOrder = ['Beklemede', 'Development', 'Test'];
 const statusColors = {
@@ -74,7 +74,7 @@ const CreateyourJira = () => {
         };
 
         try {
-            await fetch('http://localhost:4000/api/daily', {
+            await fetch('https://tanyassistant.onrender.com/api/daily', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
@@ -120,7 +120,7 @@ const CreateyourJira = () => {
                 });
             }
 
-            await fetch('http://localhost:4000/api/daily', {
+            await fetch('https://tanyassistant.onrender.com/api/daily', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
@@ -195,7 +195,7 @@ const CreateyourJira = () => {
     const fetchStatuses = async () => {
         let token = localStorage.getItem('authToken')
 
-        const res = await fetch(`http://localhost:4000/api/jira/getAllStatus`, {
+        const res = await fetch(`https://tanyassistant.onrender.com/api/jira/getAllStatus`, {
             method: 'GET',
             headers: {
                 Authorization: `Bearer ${token}`
@@ -208,7 +208,7 @@ const CreateyourJira = () => {
 
     // Kullanıcının mapping'ini çek
     const fetchUserStatusMapping = async () => {
-        const res = await fetch(`http://localhost:4000/api/jira/status-mapping`, {
+        const res = await fetch(`https://tanyassistant.onrender.com/api/jira/status-mapping`, {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem('authToken')}`
             }
@@ -219,7 +219,7 @@ const CreateyourJira = () => {
 
     // Mapping'i kaydet
     const saveUserStatusMapping = async (username, newMapping) => {
-        await fetch(`http://localhost:4000/api/jira/status-mapping`, {
+        await fetch(`https://tanyassistant.onrender.com/api/jira/status-mapping`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

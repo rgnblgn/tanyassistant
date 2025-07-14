@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import './Meeting.css';
 
-const API_URL = 'http://localhost:4000/api/meetings';
+const API_URL = 'https://tanyassistant.onrender.com/api/meetings';
 
 const Meeting = () => {
   const [notes, setNotes] = useState([]);
