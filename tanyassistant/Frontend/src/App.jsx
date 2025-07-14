@@ -5,7 +5,7 @@ import Daily from './pages/Daily';
 import AiNotes from './pages/AiNotes';
 import JiraPage from './pages/Jirapage';
 import Login from './pages/Login';
-import Teams from './pages/teams';
+import Teams from './pages/Teams.jsx';
 import CreateYourJira from './pages/CreateYourJira'
 import LogWork from './pages/LogWork.jsx'
 import Home from './pages/Home.jsx'
