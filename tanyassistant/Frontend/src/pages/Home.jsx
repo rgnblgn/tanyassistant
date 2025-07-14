@@ -5,7 +5,7 @@ import Meeting from './Meeting';
 import Daily from './Daily';
 import AiNotes from './AiNotes';
 import JiraPage from './Jirapage';
-import Teams from './teams';
+import Teams from './Teams.jsx';
 import CreateYourJira from './CreateYourJira'
 import LogWork from './LogWork.jsx'
 import './Home.css'
