@@ -1,14 +1,22 @@
 // src/pages/Daily.jsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import './Daily.css';
+import { AppContext } from '../AppContext';
 
 const API_DAILY = 'http://localhost:4000/api/daily';
 
 const Daily = () => {
   const [records, setRecords] = useState([]);
+  const { baseUrl } = useContext(AppContext);
 
   useEffect(() => {
-    fetch(API_DAILY)
+    const token = localStorage.getItem('authToken');
+
+    fetch(API_DAILY, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
       .then(res => res.json())
       .then(data => setRecords(data))
       .catch(err => console.error('GET /api/daily failed:', err));
@@ -63,7 +71,7 @@ const Daily = () => {
                     .map((i, idx) => (
                       <div key={idx} className="issue-block">
                         <a
-                          href={`${import.meta.env.VITE_API_URL}/browse/${i.key}`}
+                          href={`${baseUrl}/browse/${i.key}`}
                           target="_blank"
                         >
                           <strong>{i.key} </strong>

@@ -6,6 +6,7 @@ const router = express.Router();
 const authMiddleware = require('../authMiddleware');
 const statusMapping = require('./statusMapping.js');
 const moment = require('moment');
+const { decrypt } = require('../utils/encryption');
 
 
 const agent = new https.Agent({ rejectUnauthorized: false }); // Sertifika doğrulamasını kapat
@@ -14,8 +15,8 @@ router.use('/status-mapping', statusMapping);
 router.get('/getUserIssues', authMiddleware, async (req, res) => {
   const { jiraUsername, jiraPassword, jiraBaseUrl } = req.user;
   const username = req.query.username
-
-  const auth = Buffer.from(`${jiraUsername}:${jiraPassword}`).toString('base64');
+  const decryptedPassword = decrypt(jiraPassword);
+  const auth = Buffer.from(`${jiraUsername}:${decryptedPassword}`).toString('base64');
   const fetchUrl = `${jiraBaseUrl}rest/api/2/search?jql=assignee=${username} AND resolution=Unresolved&maxResults=200`;
   try {
     const result = await axios.get(fetchUrl, {
@@ -50,7 +51,6 @@ router.get('/logs', authMiddleware, async (req, res) => {
 
   const jql = `worklogAuthor = ${username} AND worklogDate >= "${startDate.format('YYYY-MM-DD')}"`;
   const url = `${jiraBaseUrl}rest/api/2/search?jql=${encodeURIComponent(jql)}&maxResults=1000`;
-  console.log(authToken)
   try {
     const result = await axios.get(url, {
       headers: {
@@ -101,8 +101,9 @@ router.get('/logs', authMiddleware, async (req, res) => {
 
 router.get('/getAllStatus', authMiddleware, async (req, res) => {
   const { jiraUsername, jiraPassword, jiraBaseUrl } = req.user;
+  const decryptedPassword = decrypt(jiraPassword);
 
-  const auth = Buffer.from(`${jiraUsername}:${jiraPassword}`).toString('base64');
+  const auth = Buffer.from(`${jiraUsername}:${decryptedPassword}`).toString('base64');
   const fetchUrl = `${jiraBaseUrl}rest/api/2/status`;
   try {
     const result = await axios.get(fetchUrl, {

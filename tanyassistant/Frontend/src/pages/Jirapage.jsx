@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import './JiraPage.css'; // İsteğe bağlı stil dosyası
+import { AppContext } from '../AppContext';
 
 const API_BASE = 'http://localhost:4000/api';
 
@@ -17,15 +18,21 @@ const JiraPage = () => {
     const [activeIssues, setActiveIssues] = useState([]);
     const [commentMap, setCommentMap] = useState({});
     const [otherNote, setOtherNote] = useState('');
+    const { baseUrl } = useContext(AppContext);
 
 
-    // Saved usernames DB'den alınır
     useEffect(() => {
-        fetch(`${API_BASE}/saved-users`)
+        const token = localStorage.getItem('authToken');
+        fetch(`${API_BASE}/saved-users`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
             .then(res => res.json())
             .then(data => setSavedUsers(data))
             .catch(err => console.error('Kısayol kullanıcılar alınamadı', err));
     }, []);
+
 
     const handleIssueClick = (issue) => {
         if (!activeIssues.find(item => item.id === issue.id)) {
@@ -36,6 +43,7 @@ const JiraPage = () => {
 
     const handleOtherNoteSubmit = async () => {
         if (!username || !otherNote.trim()) return alert("Kullanıcı adı veya not boş olamaz.");
+        const token = localStorage.getItem('authToken');
 
         const payload = {
             assign: username.toLowerCase(),
@@ -49,9 +57,12 @@ const JiraPage = () => {
         };
 
         try {
-            await fetch('http://localhost:4000/api/daily', {
+            await fetch(`${API_BASE}/daily`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
                 body: JSON.stringify(payload)
             });
             alert('Diğer not MongoDB’ye kaydedildi');
@@ -62,12 +73,14 @@ const JiraPage = () => {
     };
 
 
+
     const handleCommentChange = (id, value) => {
         setCommentMap(prev => ({ ...prev, [id]: value }));
     };
 
 
     const handleSubmit = async () => {
+        const token = localStorage.getItem('authToken');
         const grouped = {};
 
         activeIssues.forEach(issue => {
@@ -81,7 +94,6 @@ const JiraPage = () => {
         });
 
         for (const [assign, issues] of Object.entries(grouped)) {
-            // othersComment varsa bu assign'a ekle
             const payload = {
                 assign: assign.toLowerCase(),
                 issues: [...issues],
@@ -95,9 +107,12 @@ const JiraPage = () => {
                 });
             }
 
-            await fetch('http://localhost:4000/api/daily', {
+            await fetch(`${API_BASE}/daily`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
                 body: JSON.stringify(payload)
             });
         }
@@ -107,6 +122,7 @@ const JiraPage = () => {
         setCommentMap({});
         setOthersComment('');
     };
+
 
 
 
@@ -137,10 +153,14 @@ const JiraPage = () => {
 
     const deleteUser = async (username) => {
         if (!window.confirm(`${username} silinsin mi?`)) return;
+        const token = localStorage.getItem('authToken');
 
         try {
             await fetch(`${API_BASE}/saved-users/${username}`, {
                 method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
             });
             setSavedUsers(prev => prev.filter(u => u !== username));
         } catch (err) {
@@ -148,20 +168,24 @@ const JiraPage = () => {
         }
     };
 
+
     const handleSearch = async () => {
         await fetchUserIssues(username);
+        const token = localStorage.getItem('authToken');
 
-        // DB'ye kullanıcıyı POST et
         await fetch(`${API_BASE}/saved-users`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
             body: JSON.stringify({ username })
         });
 
-        // Yeni kullanıcıyı hemen göster
         setSavedUsers(prev => [...new Set([...prev, username])]);
         setUsername('');
     };
+
 
     const handleDelete = (id) => {
         setActiveIssues(activeIssues.filter(item => item.id !== id));
@@ -247,7 +271,7 @@ const JiraPage = () => {
                     {activeIssues.map(issue => (
                         <div key={issue.id} className="issue-card">
                             <a
-                                href={`${import.meta.env.VITE_API_URL}/browse/${issue.key}`}
+                                href={`${baseUrl}/browse/${issue.key}`}
                                 target="_blank"
                                 onClick={(e) => e.stopPropagation()}
                             >

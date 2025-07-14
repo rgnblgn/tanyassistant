@@ -12,13 +12,21 @@ const Meeting = () => {
   const [selectedNote, setSelectedNote] = useState(null);
 
   useEffect(() => {
-    fetch(API_URL)
+    const token = localStorage.getItem('authToken');
+
+    fetch(API_URL, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
       .then(res => res.json())
       .then(data => setNotes(data))
       .catch(err => console.error('GET failed:', err));
   }, []);
 
   const handleSave = () => {
+    const token = localStorage.getItem('authToken');
+
     const newNote = {
       title,
       content,
@@ -27,7 +35,7 @@ const Meeting = () => {
 
     fetch(API_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
       body: JSON.stringify(newNote)
     })
       .then(res => res.json())
