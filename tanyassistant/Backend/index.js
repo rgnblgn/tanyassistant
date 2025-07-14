@@ -15,7 +15,11 @@ const auth = require('./middleware/auth');
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-app.use(cors());
+app.use(cors({
+  origin: 'https://tanyassistant-1drcmmwcw-rgnblgns-projects.vercel.app',
+  credentials: true
+}));
+
 app.use(express.json());
 
 // MongoDB bağlantısı

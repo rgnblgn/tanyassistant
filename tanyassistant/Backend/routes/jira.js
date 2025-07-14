@@ -9,7 +9,7 @@ const moment = require('moment');
 const { decrypt } = require('../utils/encryption');
 
 
-const agent = new https.Agent({ rejectUnauthorized: false }); // Sertifika doğrulamasını kapat
+//const agent = new https.Agent({ rejectUnauthorized: false }); // Sertifika doğrulamasını kapat
 router.use('/status-mapping', statusMapping);
 
 router.get('/getUserIssues', authMiddleware, async (req, res) => {
@@ -24,7 +24,7 @@ router.get('/getUserIssues', authMiddleware, async (req, res) => {
         Authorization: `Basic ${auth}`,
         Accept: 'application/json',
       },
-      httpsAgent: agent
+      //httpsAgent: agent
     });
     res.json(result.data);
   } catch (err) {
@@ -57,7 +57,7 @@ router.get('/logs', authMiddleware, async (req, res) => {
         Authorization: `Basic ${authToken}`,
         Accept: 'application/json',
       },
-      httpsAgent: agent
+      //httpsAgent: agent
     });
 
     const logs = [];
@@ -70,7 +70,7 @@ router.get('/logs', authMiddleware, async (req, res) => {
           Authorization: `Basic ${authToken}`,
           Accept: 'application/json',
         },
-        httpsAgent: agent
+        //httpsAgent: agent
       });
 
       const filtered = worklogResult.data.worklogs.filter(w =>
@@ -111,7 +111,7 @@ router.get('/getAllStatus', authMiddleware, async (req, res) => {
         Authorization: `Basic ${auth}`,
         Accept: 'application/json',
       },
-      httpsAgent: agent
+      //httpsAgent: agent
     });
     res.json(result.data);
   } catch (err) {
