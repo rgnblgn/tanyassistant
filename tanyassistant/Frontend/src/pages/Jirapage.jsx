@@ -271,7 +271,7 @@ const JiraPage = () => {
                     {activeIssues.map(issue => (
                         <div key={issue.id} className="issue-card">
                             <a
-                                href={`${baseUrl}/browse/${issue.key}`}
+                                href={`${baseUrl}browse/${issue.key}`}
                                 target="_blank"
                                 onClick={(e) => e.stopPropagation()}
                             >
