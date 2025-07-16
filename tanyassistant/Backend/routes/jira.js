@@ -7,13 +7,8 @@ const authMiddleware = require('../authMiddleware');
 const statusMapping = require('./statusMapping.js');
 const moment = require('moment');
 const { decrypt } = require('../utils/encryption');
-const cert = process.env.JIRA_CERT?.replace(/\\n/g, '\n')
 
-const agent = new https.Agent({
-  ca: cert
-});
-
-//const agent = new https.Agent({ rejectUnauthorized: false }); // Sertifika doğrulamasını kapat
+const agent = new https.Agent({ rejectUnauthorized: false }); // Sertifika doğrulamasını kapat
 router.use('/status-mapping', statusMapping);
 
 router.get('/getUserIssues', authMiddleware, async (req, res) => {
