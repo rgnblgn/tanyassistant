@@ -7,7 +7,7 @@ const authMiddleware = require('../authMiddleware');
 const statusMapping = require('./statusMapping.js');
 const moment = require('moment');
 const { decrypt } = require('../utils/encryption');
-const cert = process.env.JIRA_CERT;
+const cert = process.env.JIRA_CERT?.replace(/\\n/g, '\n')
 
 const agent = new https.Agent({
   ca: cert
