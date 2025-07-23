@@ -25,12 +25,8 @@ const App = () => {
           <Link to="/meeting" style={{ marginRight: '20px' }}>Meeting</Link>
           <Link to="/daily" style={{ marginRight: '20px' }}>Daily</Link>
           <Link to="/aiNotes">Ai Notes</Link>
-          <Link to="/teams" style={{ marginRight: '20px' }}>Teams</Link>
           <Link to="/createYourJira" style={{ marginRight: '20px' }}>createYourJira</Link>
-
           <Link to="/logWork" style={{ marginRight: '20px' }}>LogWork</Link>
-
-
           {isLoggedIn && (
             <button onClick={() => {
               localStorage.removeItem('authToken');
@@ -47,16 +43,11 @@ const App = () => {
         <Route path="/login" element={<Login onLogin={() => { setIsLoggedIn(true); window.location.href = "/" }} />} />
         <Route path="/" element={isLoggedIn ? <Home /> : <Navigate to="/login" />} />
         <Route path="/jira" element={isLoggedIn ? <JiraPage /> : <Navigate to="/login" />} />
-
         <Route path="/logWork" element={isLoggedIn ? <LogWork /> : <Navigate to="/login" />} />
         <Route path="/meeting" element={isLoggedIn ? <Meeting /> : <Navigate to="/login" />} />
         <Route path="/daily" element={isLoggedIn ? <Daily /> : <Navigate to="/login" />} />
         <Route path="/aiNotes" element={isLoggedIn ? <AiNotes /> : <Navigate to="/login" />} />
-        <Route path="/teams" element={isLoggedIn ? <Teams /> : <Navigate to="/login" />} />
         <Route path="/createYourJira" element={isLoggedIn ? <CreateYourJira /> : <Navigate to="/login" />} />
-
-
-
       </Routes>
     </div>
   );
