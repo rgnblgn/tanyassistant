@@ -23,6 +23,11 @@ router.get('/getUserIssues', authMiddleware, async (req, res) => {
     : new https.Agent({ cert: process.env.CERT_PEM_CONTENT, rejectUnauthorized: true });
   const auth = Buffer.from(`${jiraUsername}:${decryptedPassword}`).toString('base64');
   const fetchUrl = `${jiraBaseUrl}rest/api/2/search?jql=assignee=${username} AND resolution=Unresolved&maxResults=200`;
+  console.log('jiraBaseUrl', jiraBaseUrl);
+  console.log('trustedUrls', trustedUrls);
+  console.log('useUnsafeAgent', useUnsafeAgent);
+  console.log('fetchUrl', fetchUrl);
+
   try {
     const result = await axios.get(fetchUrl, {
       headers: {
@@ -123,6 +128,7 @@ router.get('/getAllStatus', authMiddleware, async (req, res) => {
 
   const auth = Buffer.from(`${jiraUsername}:${decryptedPassword}`).toString('base64');
   const fetchUrl = `${jiraBaseUrl}rest/api/2/status`;
+
   try {
     const result = await axios.get(fetchUrl, {
       headers: {
