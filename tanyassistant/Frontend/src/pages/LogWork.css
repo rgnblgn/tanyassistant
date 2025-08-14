@@ -16,3 +16,7 @@
 .saved-users button:hover {
     background: #e0e0e0;
 }
+
+.date-range input {
+    width: auto;
+}

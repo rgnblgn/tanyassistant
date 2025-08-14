@@ -43,7 +43,7 @@ router.get('/getUserIssues', authMiddleware, async (req, res) => {
 });
 
 router.get('/logs', authMiddleware, async (req, res) => {
-  const { username, range } = req.query;
+  const { username, range, startDate, endDate } = req.query;
   const { jiraBaseUrl, authToken } = req.user;
   const trustedUrls = (process.env.JIRA_BASE_URLS || '')
     .split(',')
@@ -52,20 +52,12 @@ router.get('/logs', authMiddleware, async (req, res) => {
   const agent = useUnsafeAgent
     ? new https.Agent({ rejectUnauthorized: false })
     : new https.Agent({ cert: process.env.CERT_PEM_CONTENT, rejectUnauthorized: true });
-  if (!username || !range) {
+  if (!username || !startDate || !endDate) {
     return res.status(400).json({ error: 'Eksik parametre' });
   }
 
-  let startDate;
-  if (range === 'lastWeek') {
-    startDate = moment().subtract(7, 'days');
-  } else if (range === 'last2Weeks') {
-    startDate = moment().subtract(14, 'days');
-  } else {
-    return res.status(400).json({ error: 'Geçersiz range' });
-  }
 
-  const jql = `worklogAuthor = ${username} AND worklogDate >= "${startDate.format('YYYY-MM-DD')}"`;
+  const jql = `worklogAuthor = ${username} AND worklogDate >= "${startDate}" AND worklogDate <= "${endDate}"`;
   const url = `${jiraBaseUrl}rest/api/2/search?jql=${encodeURIComponent(jql)}&maxResults=1000`;
   try {
     const result = await axios.get(url, {

@@ -5,6 +5,8 @@ import LogWorkChart from '../components/LogWorkChart';
 const LogWork = () => {
     const [username, setUsername] = useState('');
     const [savedUsers, setSavedUsers] = useState([]);
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
     const [logs, setLogs] = useState([]);
     const [range, setRange] = useState('lastWeek');
     const [chartData, setChartData] = useState([]);
@@ -34,7 +36,7 @@ const LogWork = () => {
         if (!user) return;
         saveUser(user);
 
-        const res = await fetch(`https://tanyassistant.onrender.com/api/jira/logs?username=${user}&range=${range}`, {
+        const res = await fetch(`http://localhost:4000/api/jira/logs?username=${user}&startDate=${startDate}&endDate=${endDate}`, {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem('authToken')}`,
             }
@@ -70,10 +72,18 @@ const LogWork = () => {
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                 />
-                <select value={range} onChange={(e) => setRange(e.target.value)}>
-                    <option value="lastWeek">Geçen Hafta</option>
-                    <option value="last2Weeks">Geçen 2 Hafta</option>
-                </select>
+                <div className='date-range'>
+                    <input
+                        type="date"
+                        value={startDate}
+                        onChange={(e) => setStartDate(e.target.value)}
+                    />
+                    <input
+                        type="date"
+                        value={endDate}
+                        onChange={(e) => setEndDate(e.target.value)}
+                    />
+                </div>
                 <button onClick={() => fetchLogs()}>Getir</button>
             </div>
 
